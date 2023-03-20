@@ -8,6 +8,8 @@ const TOKEN_KEY = 'whos-who-access-token'
 const Home = () => {
   const [genres, setGenres] = useState([])
   const [selectedGenre, setSelectedGenre] = useState('')
+  const [songCount, setSongCount] = useState('1')
+  const [artistPerChoice, setArtistPerChoice] = useState('2')
   const [authLoading, setAuthLoading] = useState(false)
   const [configLoading, setConfigLoading] = useState(false)
   const [token, setToken] = useState('')
@@ -16,11 +18,31 @@ const Home = () => {
     setConfigLoading(true)
     const response = await fetchFromSpotify({
       token: t,
-      endpoint: 'recommendations/available-genre-seeds'
+      endpoint: 'recommendations/available-genre-seeds',
     })
     console.log(response)
     setGenres(response.genres)
     setConfigLoading(false)
+  }
+
+  const searchGenre = async t => {
+    // setConfigLoading(true)
+    // console.log(typeof genre)
+    console.log("t is " + JSON.parse(t).value)
+    console.log("here ", selectedGenre, artistPerChoice)
+    const response = await fetchFromSpotify({
+      token: JSON.parse(t).value,
+      endpoint: 'search',
+      params: {
+        q: 'genre%3A' + selectedGenre,
+        type: 'artist%2Ctrack',
+        market: 'US',
+        limit: artistPerChoice,
+        offset: 0
+      }
+    })
+    console.log("search is ", response)
+    // setConfigLoading(false)
   }
 
   useEffect(() => {
@@ -56,9 +78,13 @@ const Home = () => {
 
   return (
     <div>
+      <h1>Spotify Guessing Game</h1>
+      <p>To play the game either: 1. Click 'State Game' button and play with default options or 2. Change the options for the game first. </p>
+
       Genre:
       <select
         value={selectedGenre}
+        // defaultValue={genres[Math.floor(Math.random() * genres.length)]}
         onChange={event => setSelectedGenre(event.target.value)}
       >
         <option value='' />
@@ -68,7 +94,37 @@ const Home = () => {
           </option>
         ))}
       </select>
-    </div>
+
+      Number of Songs:
+      <select
+        value={songCount}
+        onChange={event => setSongCount(event.target.value)}
+      // defaultValue="1"
+      >
+        <option value="1">1</option>
+        <option value='2'>2</option>
+        <option value='3'>3</option>
+      </select>
+      {console.log("soung count " + songCount)}
+
+      Number of Artists per Choice:
+      <select
+        value={artistPerChoice}
+        onChange={event => setArtistPerChoice(event.target.value)}
+      // defaultValue='2'
+      >
+        <option value='1'>1</option>
+        <option value='2'>2</option>
+        <option value='3'>3</option>
+        <option value='4'>4</option>
+      </select>
+      {console.log("artist " + artistPerChoice)}
+      {console.log(selectedGenre)}
+      <button
+        onClick={() => searchGenre(localStorage.getItem(TOKEN_KEY))}
+      >
+        Start Game!</button>
+    </div >
   )
 }
 
