@@ -104,7 +104,7 @@ const Game = ({
           {[...songs].slice(0, numSongs).map((song) => (
             <div key={song.artistName}>
               <button onClick={() => handleSelectSong(song)}>
-                <p>{song.songName}</p>
+                <p>{song.trackName}</p>
               </button>
             </div>
           ))}
