@@ -30,11 +30,12 @@ const Home = () => {
   }
 
   const searchGenre = async () => {
+    console.log("songs ", numSongs, " numArt ", numArtists, " genre ", genre)
     let songsToAdd = []
     let artistToGetById = []
     let artistToAdd = []
     console.log("token ", token)
-    const response = await fetchFromSpotify({
+    await fetchFromSpotify({
       token: token,
       endpoint: 'search',
       params: {
@@ -44,50 +45,53 @@ const Home = () => {
         limit: artistPerChoice,
         offset: 0
       }
-    })
-    // .then(response => {
-    // console.log("response is ", response),
-    response.tracks.items.forEach(track => {
-      artistToGetById.push(track.artists[0].id),
-        // console.log("artists ids ", artistToGetById),
-        songsToAdd.push([
+    }).then(response => {
+      // console.log("response is ", response),
+      response.tracks.items.forEach(track => {
+        artistToGetById.push(track.artists[0].id),
+          // console.log("artists ids ", artistToGetById),
+          songsToAdd.push([
+            {
+              trackName: track.name,
+              artistName: track.artists[0].name,
+              previewURL: track.preview_url
+            }
+          ])
+
+        // console.log("track ", track),
+        //   console.log("track artist ", track.artists[0].name),
+        //   console.log("track artist id ", track.artists[0].id),
+        //   console.log("track name ", track.name),
+        //   console.log("track preview ", track.preview_url)
+      })
+
+      response.artists.items.forEach(artist => {
+        // console.log("artist ", artist),
+        //   console.log("artist name ", artist.name),
+        //   console.log("artist img ", artist.images[2])
+        artistToAdd.push([
           {
-            trackName: track.name,
-            artistName: track.artists[0].name,
-            previewURL: track.preview_url
+            artistName: artist.name,
+            artistImg: artist.images[2]
           }
         ])
+      })
 
-      // console.log("track ", track),
-      //   console.log("track artist ", track.artists[0].name),
-      //   console.log("track artist id ", track.artists[0].id),
-      //   console.log("track name ", track.name),
-      //   console.log("track preview ", track.preview_url)
-    })
+      setSongs(songsToAdd)
+      setArtists(artistToAdd)
 
-    // })
-
-
-    response.artists.items.forEach(artist => {
-      // console.log("artist ", artist),
-      //   console.log("artist name ", artist.name),
-      //   console.log("artist img ", artist.images[2])
-      artistToAdd.push([
-        {
-          artistName: artist.name,
-          artistImg: artist.images[2]
-        }
-      ])
-
+      localStorage.setItem(
+        "gameSettings", JSON.stringify({
+          selectedGenre: selectedGenre,
+          numSongs: songCount,
+          numArtists: artistPerChoice,
+          songs: songs,
+          artists: artists
+        }))
 
     })
 
-    setSongs(songsToAdd)
-    setArtists(artistToAdd)
-    // console.log("tracks is ", response.tracks.items[0].preview_url)
-    // console.log("img is ", response.artists.items[0].images[0].url)
-    // setArtImg(response.artists.items[0].images[0].url)
-    // response.map()
+
   }
 
   const randomize = (min, max) => {
@@ -178,13 +182,10 @@ const Home = () => {
       </select>
       {/* {console.log("artist " + artistPerChoice)} */}
       {/* {console.log(selectedGenre)} */}
-      <Link to={{
-        pathname: '/play',
-        state: { selectedGenre, artistPerChoice, songCount, songs, artists }
-      }}>
+      <Link to={"/play"}>
         <button
           onClick={() => {
-            { console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre) }
+            // { console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre) }
             searchGenre()
           }}
         >
