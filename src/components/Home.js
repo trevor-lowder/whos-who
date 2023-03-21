@@ -57,13 +57,13 @@ const Home = () => {
               previewURL: track.preview_url
             }
           )
-      })
+
 
       response.artists.items.forEach(artist => {
         artistToAdd.push(
           {
             artistName: artist.name,
-            artistImg: artist.images[2]
+            artistImg: artist.images[2].url
           }
         )
       })
