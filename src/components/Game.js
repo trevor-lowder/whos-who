@@ -29,22 +29,22 @@ const Game = ({
 
   songs = [
     {
-      songName: "Song 1",
+      trackName: "Song 1",
       artistName: "Artist 1",
       previewURL: 1,
     },
     {
-      songName: "Song 2",
+      trackName: "Song 2",
       artistName: "Artist 2",
       previewURL: 2,
     },
     {
-      songName: "Song 3",
+      trackName: "Song 3",
       artistName: "Artist 3",
       previewURL: 3,
     },
     {
-      songName: "Song 4",
+      trackName: "Song 4",
       artistName: "Artist 4",
       previewURL: 4,
     },
