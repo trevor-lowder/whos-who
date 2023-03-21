@@ -50,22 +50,28 @@ const Game = ({
     },
   ];
 
-  // Get random 'numArtists' artists
+  /*   // Get random 'numArtists' artists
   const shuffledArtists = artists.sort(() => 0.5 - Math.random()); // Shuffle the array
   const selectedArtists = shuffledArtists.slice(0, numArtists); // Get a new array with 'numArtists' items
   // Get random 'numSongs' songs
   const shuffledSongs = songs.sort(() => 0.5 - Math.random()); // Shuffle the array
-  const selectedSongs = shuffledSongs.slice(0, numSongs); // Get a new array with 'numArtists' items
+  const selectedSongs = shuffledSongs.slice(0, numSongs); // Get a new array with 'numArtists' items */
   // Game state
   const [selectedSong, setSelectedSong] = useState(null);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [attempts, setAttempts] = useState(numAttempts);
+  const [score, setScore] = useState(0);
   // Game logic
   const handleSelectSong = (song) => {
     setSelectedSong(song);
     if (selectedArtist !== null) {
-      if (song.artistName !== selectedArtist.name) {
+      if (song.artistName !== selectedArtist.artistName) {
         setAttempts(attempts - 1);
+        setSelectedSong(null);
+        setSelectedArtist(null);
+      }
+      if (song.artistName == selectedArtist.artistName) {
+        setAttempts(score + 10);
         setSelectedSong(null);
         setSelectedArtist(null);
       }
@@ -74,8 +80,13 @@ const Game = ({
   const handleSelectArtist = (artist) => {
     setSelectedArtist(artist);
     if (selectedSong !== null) {
-      if (selectedSong.artistName !== artist.name) {
+      if (selectedSong.artistName !== artist.artistName) {
         setAttempts(attempts - 1);
+        setSelectedSong(null);
+        setSelectedArtist(null);
+      }
+      if (selectedSong.artistName == artist.artistName) {
+        setScore(score + 10);
         setSelectedSong(null);
         setSelectedArtist(null);
       }
@@ -85,11 +96,12 @@ const Game = ({
   return (
     <div>
       <h1>{genre.toLocaleUpperCase()} Music Game</h1>
+      <h2>Current Score: {score}</h2>
       <p>Attempts: {attempts}</p>
       <div>
         <h2>Songs</h2>
         <div>
-          {selectedSongs.map((song) => (
+          {[...songs].slice(0, numSongs).map((song) => (
             <div key={song.artistName}>
               <button onClick={() => handleSelectSong(song)}>
                 <p>{song.songName}</p>
@@ -99,7 +111,7 @@ const Game = ({
         </div>
         <h2>Artists</h2>
         <div>
-          {selectedArtists.map((artist) => (
+          {[...artists].slice(0, numArtists).map((artist) => (
             <div key={artist.artistName}>
               <div>
                 <img src={artist.artistImg} alt={artist.artistName} />
