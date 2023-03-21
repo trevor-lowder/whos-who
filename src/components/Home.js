@@ -30,7 +30,7 @@ const Home = () => {
   }
 
   const searchGenre = async () => {
-    console.log("songs ", numSongs, " numArt ", numArtists, " genre ", genre)
+    console.log("songs ", songCount, " numArt ", artistPerChoice, " genre ", selectedGenre)
     let songsToAdd = []
     let artistToGetById = []
     let artistToAdd = []
@@ -50,13 +50,13 @@ const Home = () => {
       response.tracks.items.forEach(track => {
         artistToGetById.push(track.artists[0].id),
           // console.log("artists ids ", artistToGetById),
-          songsToAdd.push([
+          songsToAdd.push(
             {
               trackName: track.name,
               artistName: track.artists[0].name,
               previewURL: track.preview_url
             }
-          ])
+          )
 
         // console.log("track ", track),
         //   console.log("track artist ", track.artists[0].name),
@@ -69,12 +69,12 @@ const Home = () => {
         // console.log("artist ", artist),
         //   console.log("artist name ", artist.name),
         //   console.log("artist img ", artist.images[2])
-        artistToAdd.push([
+        artistToAdd.push(
           {
             artistName: artist.name,
-            artistImg: artist.images[2]
+            artistImg: artist.images[2].url
           }
-        ])
+        )
       })
 
       setSongs(songsToAdd)
