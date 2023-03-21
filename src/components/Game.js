@@ -31,7 +31,7 @@ const Game = ({
     {
       trackName: "Song 1",
       artistName: "Artist 1",
-      previewURL: 1,
+      previewURL: 'https://p.scdn.co/mp3-preview/5f6f6d2b88273e6cfc8ad8a76a8c02172a80afbd?cid=74f434552d40467782bc1bc64b12b2e9',
     },
     {
       trackName: "Song 2",
@@ -92,6 +92,34 @@ const Game = ({
       }
     }
   };
+  function AudioButton({ url }) {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [audio, setAudio] = useState(null);
+  
+    const playAudio = () => {
+      const newAudio = new Audio(url);
+      newAudio.play();
+      setIsPlaying(true);
+      setAudio(newAudio);
+    };
+  
+    const pauseAudio = () => {
+      if (audio) {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    };
+  
+    return (
+      <div>
+        {isPlaying ? (
+          <button onClick={pauseAudio}>Pause Audio</button>
+        ) : (
+          <button onClick={playAudio}>Play Audio</button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -106,6 +134,7 @@ const Game = ({
               <button onClick={() => handleSelectSong(song)}>
                 <p>{song.trackName}</p>
               </button>
+              <AudioButton url={song.previewURL} />
             </div>
           ))}
         </div>
