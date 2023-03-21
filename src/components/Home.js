@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import fetchFromSpotify, { request } from '../services/api'
 
 const AUTH_ENDPOINT =
@@ -7,42 +8,92 @@ const TOKEN_KEY = 'whos-who-access-token'
 
 const Home = () => {
   const [genres, setGenres] = useState([])
-  const [selectedGenre, setSelectedGenre] = useState('')
+  const [selectedGenre, setSelectedGenre] = useState('pop')
   const [songCount, setSongCount] = useState('1')
   const [artistPerChoice, setArtistPerChoice] = useState('2')
   const [authLoading, setAuthLoading] = useState(false)
   const [configLoading, setConfigLoading] = useState(false)
   const [token, setToken] = useState('')
+  const [songs, setSongs] = useState([])
+  const [artists, setArtists] = useState([])
+  // const [artImg, setArtImg] = useState('')
 
   const loadGenres = async t => {
     setConfigLoading(true)
     const response = await fetchFromSpotify({
       token: t,
-      endpoint: 'recommendations/available-genre-seeds',
+      endpoint: 'recommendations/available-genre-seeds'
     })
-    console.log(response)
+    // console.log(response)
     setGenres(response.genres)
     setConfigLoading(false)
   }
 
-  const searchGenre = async t => {
-    // setConfigLoading(true)
-    // console.log(typeof genre)
-    console.log("t is " + JSON.parse(t).value)
-    console.log("here ", selectedGenre, artistPerChoice)
+  const searchGenre = async () => {
+    let songsToAdd = []
+    let artistToGetById = []
+    let artistToAdd = []
+    console.log("token ", token)
     const response = await fetchFromSpotify({
-      token: JSON.parse(t).value,
+      token: token,
       endpoint: 'search',
       params: {
         q: 'genre%3A' + selectedGenre,
         type: 'artist%2Ctrack',
-        market: 'US',
+        // market: 'US',
         limit: artistPerChoice,
         offset: 0
       }
     })
-    console.log("search is ", response)
-    // setConfigLoading(false)
+    // .then(response => {
+    // console.log("response is ", response),
+    response.tracks.items.forEach(track => {
+      artistToGetById.push(track.artists[0].id),
+        // console.log("artists ids ", artistToGetById),
+        songsToAdd.push([
+          {
+            trackName: track.name,
+            artistName: track.artists[0].name,
+            previewURL: track.preview_url
+          }
+        ])
+
+      // console.log("track ", track),
+      //   console.log("track artist ", track.artists[0].name),
+      //   console.log("track artist id ", track.artists[0].id),
+      //   console.log("track name ", track.name),
+      //   console.log("track preview ", track.preview_url)
+    })
+
+    // })
+
+
+    response.artists.items.forEach(artist => {
+      // console.log("artist ", artist),
+      //   console.log("artist name ", artist.name),
+      //   console.log("artist img ", artist.images[2])
+      artistToAdd.push([
+        {
+          artistName: artist.name,
+          artistImg: artist.images[2]
+        }
+      ])
+
+
+    })
+
+    setSongs(songsToAdd)
+    setArtists(artistToAdd)
+    // console.log("tracks is ", response.tracks.items[0].preview_url)
+    // console.log("img is ", response.artists.items[0].images[0].url)
+    // setArtImg(response.artists.items[0].images[0].url)
+    // response.map()
+  }
+
+  const randomize = (min, max) => {
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    return Math.floor(Math.random() * (max - min + 1) + min)
   }
 
   useEffect(() => {
@@ -81,8 +132,17 @@ const Home = () => {
       <h1>Spotify Guessing Game</h1>
       <p>To play the game either: 1. Click 'State Game' button and play with default options or 2. Change the options for the game first. </p>
 
-      Genre:
-      <select
+      <label htmlFor="genre-choice">Genre:</label>
+      {/* <input
+        type="text"
+        list="genre-choices"
+        id="genre-choice"
+        name="genre-choice"
+        placeholder={selectedGenre}
+        onClick={event => event.target.value = ""}
+        onChange={event => setSelectedGenre(event.target.value)}
+      /> */}
+      <select id='genre-choices'
         value={selectedGenre}
         // defaultValue={genres[Math.floor(Math.random() * genres.length)]}
         onChange={event => setSelectedGenre(event.target.value)}
@@ -94,36 +154,57 @@ const Home = () => {
           </option>
         ))}
       </select>
+      <button onClick={() => setSelectedGenre(genres[Math.floor(Math.random() * genres.length)])}>Pick Random Genre</button>
 
       Number of Songs:
       <select
         value={songCount}
         onChange={event => setSongCount(event.target.value)}
-      // defaultValue="1"
       >
         <option value="1">1</option>
         <option value='2'>2</option>
         <option value='3'>3</option>
       </select>
-      {console.log("soung count " + songCount)}
+      {/* {console.log("soung count " + songCount)} */}
 
       Number of Artists per Choice:
       <select
         value={artistPerChoice}
         onChange={event => setArtistPerChoice(event.target.value)}
-      // defaultValue='2'
       >
-        <option value='1'>1</option>
         <option value='2'>2</option>
         <option value='3'>3</option>
         <option value='4'>4</option>
       </select>
-      {console.log("artist " + artistPerChoice)}
-      {console.log(selectedGenre)}
+      {/* {console.log("artist " + artistPerChoice)} */}
+      {/* {console.log(selectedGenre)} */}
+      <Link to={{
+        pathname: '/play',
+        state: { selectedGenre, artistPerChoice, songCount, songs, artists }
+      }}>
+        <button
+          onClick={() => {
+            { console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre) }
+            searchGenre()
+          }}
+        >
+          Start Game!
+        </button>
+      </Link>
+      {console.log("songs to pass ", songs)}
+      {console.log("artists to pass ", artists)}
+
       <button
-        onClick={() => searchGenre(localStorage.getItem(TOKEN_KEY))}
+        onClick={() => {
+          setArtistPerChoice(randomize(2, 4));
+          setSongCount(randomize(1, 3));
+          setSelectedGenre(genres[Math.floor(Math.random() * genres.length)]);
+          { console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre) }
+          searchGenre()
+        }}
+
       >
-        Start Game!</button>
+        Randomize Game</button>
     </div >
   )
 }
