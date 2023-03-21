@@ -30,7 +30,7 @@ const Home = () => {
   }
 
   const searchGenre = async () => {
-    console.log("songs ", songCount, " numArt ", artistPerChoice, " genre ", selectedGenre)
+    console.log("songs ", songCount, " numArt ", setArtistPerChoice, " genre ", selectedGenre)
     let songsToAdd = []
     let artistToGetById = []
     let artistToAdd = []
@@ -58,17 +58,8 @@ const Home = () => {
             }
           )
 
-        // console.log("track ", track),
-        //   console.log("track artist ", track.artists[0].name),
-        //   console.log("track artist id ", track.artists[0].id),
-        //   console.log("track name ", track.name),
-        //   console.log("track preview ", track.preview_url)
-      })
 
       response.artists.items.forEach(artist => {
-        // console.log("artist ", artist),
-        //   console.log("artist name ", artist.name),
-        //   console.log("artist img ", artist.images[2])
         artistToAdd.push(
           {
             artistName: artist.name,
@@ -192,8 +183,8 @@ const Home = () => {
           Start Game!
         </button>
       </Link>
-      {console.log("songs to pass ", songs)}
-      {console.log("artists to pass ", artists)}
+      {/* {console.log("songs to pass ", songs)} */}
+      {/* {console.log("artists to pass ", artists)} */}
 
       <button
         onClick={() => {
