@@ -36,55 +36,96 @@ const Home = () => {
     let songsToAdd = []
     let artistToGetById = []
     let artistToAdd = []
+    let noPreview = []
     console.log("token ", token)
-    await fetchFromSpotify({
+    const response = await fetchFromSpotify({
       token: token,
       endpoint: 'search',
       params: {
         q: 'genre%3A' + JSON.parse(localStorage.getItem("gameSettings")).selectedGenre,
         type: 'artist%2Ctrack',
-        // market: 'US',
+        market: 'US',
         limit: 50,
         offset: 0
       }
-    }).then(response => {
-      // console.log("response is ", response),
-      response.tracks.items.forEach(track => {
-        artistToGetById.push(track.artists[0].id),
-          songsToAdd.push(
-            {
-              trackName: track.name,
-              artistName: track.artists[0].name,
-              previewURL: track.preview_url
-            }
-          )
-      })
+    })
 
-      response.artists.items.forEach(artist => {
-        artistToAdd.push(
+    // console.log("response is ", response),
+    response.tracks.items.forEach(track => {
+      artistToGetById.push(track.artists[0].id)
+      if (track.preview_url) {
+        songsToAdd.push(
           {
-            artistName: artist.name,
-            artistImg: artist.images[2].url
+            trackName: track.name,
+            artistName: track.artists[0].name,
+            previewURL: track.preview_url
           }
         )
-      })
-
-      setSongs(songsToAdd)
-      setArtists(artistToAdd)
-
-    }).then(response => {
-      console.log("asdfasdf ", response, songs, artists)
-      localStorage.setItem(
-        "apiResults", JSON.stringify({
-          songs: songsToAdd,
-          artists: artistToAdd
-        }))
-
-
-
-
-
+      }
+      else {
+        noPreview.push(
+          {
+            trackName: track.name,
+            artistName: track.artists[0].name,
+            trackId: track.id
+          }
+        )
+      }
     })
+
+    // console.log("noPreviews ", noPreview)
+    // console.log("songsToAdd ", songsToAdd)
+    // console.log("artistIds ", artistToGetById)
+    response.artists.items.forEach(artist => {
+      artistToGetById = artistToGetById.filter(id => id !== artist.id)
+
+      artistToAdd.push(
+        {
+          artistName: artist.name,
+          artistImg: artist.images[2].url
+        }
+      )
+    })
+
+    // console.log("artistIds ", artistToGetById.join(','))
+    // setSongs(songsToAdd)
+    // setArtists(artistToAdd)
+
+
+    // console.log("I'm Here ", artistToGetById)
+    // console.log("SearchArtID ", artistToGetById.join(','))
+
+    const artistResponse = await fetchFromSpotify({
+      token: token,
+      endpoint: 'artists',
+      params: {
+        ids: artistToGetById.join(',')
+      }
+    })
+
+    // console.log("2222response is ", artistResponse)
+
+    artistResponse.artists.forEach(artist => {
+      artistToGetById = artistToGetById.filter(id => id !== artist.id)
+
+      artistToAdd.push(
+        {
+          artistName: artist.name,
+          artistImg: artist.images[2].url
+        }
+      )
+    })
+
+    setSongs(songsToAdd)
+    setArtists(artistToAdd)
+
+    localStorage.setItem(
+      "apiResults", JSON.stringify({
+        songs: songsToAdd,
+        artists: artistToAdd
+      }))
+
+
   }
 
   const updateLocalStorageGameSettings = (selectedGenre, songCount, artistPerChoice) => {
@@ -96,6 +137,7 @@ const Home = () => {
       })
     )
   }
+
 
   const randomize = (min, max) => {
     min = Math.ceil(min)
