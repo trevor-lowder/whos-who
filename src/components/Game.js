@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-const Game = ({
-  genre = "pop",
-  numArtists = 3,
-  numSongs = 1,
-  songs,
-  artists,
-  numAttempts = 3,
-}) => {
-  artists = [
+const Game = ({ numAttempts = 3 }) => {
+  /*   let artists = [
     {
       artistName: "Artist 1",
       artistImg: "https://via.placeholder.com/150",
@@ -25,9 +18,9 @@ const Game = ({
       artistName: "Artist 4",
       artistImg: "https://via.placeholder.com/150",
     },
-  ];
+  ]; */
 
-  songs = [
+  /* let songs = [
     {
       trackName: "Song 1",
       artistName: "Artist 1",
@@ -52,7 +45,7 @@ const Game = ({
       previewURL:
         "https://p.scdn.co/mp3-preview/7b092bad4834dd01a0c84ab0733badb0af60e24b?cid=74f434552d40467782bc1bc64b12b2e9",
     },
-  ];
+  ]; */
 
   /*   // Get random 'numArtists' artists
   const shuffledArtists = artists.sort(() => 0.5 - Math.random()); // Shuffle the array
@@ -61,24 +54,23 @@ const Game = ({
   const shuffledSongs = songs.sort(() => 0.5 - Math.random()); // Shuffle the array
   const selectedSongs = shuffledSongs.slice(0, numSongs); // Get a new array with 'numArtists' items */
   // Game state
-  const [data, setData] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [songs, setSongs] = useState([]);
   const [gameSettings, setGameSettings] = useState([]);
   const [selectedSong, setSelectedSong] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(false);
   const [attempts, setAttempts] = useState(numAttempts);
   const [score, setScore] = useState(0);
 
-
-
   // Game logic
   useEffect(() => {
     const spotifyData = localStorage.getItem("apiResults");
     const settings = localStorage.getItem("gameSettings");
-    setData(JSON.parse(spotifyData));
+    setArtists(JSON.parse(spotifyData).artists);
+    setSongs(JSON.parse(spotifyData).songs);
     setGameSettings(JSON.parse(settings));
-    
   }, []);
-  
+
   const handleSelectSong = (song) => {
     setSelectedSong(song);
     if (selectedArtist !== null) {
@@ -141,7 +133,7 @@ const Game = ({
   return (
     <div>
       {console.log("gameSettings", gameSettings)}
-      {console.log("spotifyData", data)}
+      {console.log("songs", songs)}
       <h1>{gameSettings.selectedGenre} Music Game</h1>
       <h2>Current Score: {score}</h2>
       <p>Attempts: {attempts}</p>
