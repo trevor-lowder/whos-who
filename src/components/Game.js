@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const Game = ({
   genre = "pop",
-  numArtists = 2,
+  numArtists = 3,
   numSongs = 1,
   songs,
   artists,
@@ -29,24 +29,28 @@ const Game = ({
 
   songs = [
     {
-      songName: "Song 1",
+      trackName: "Song 1",
       artistName: "Artist 1",
-      previewURL: 1,
+      previewURL:
+        "https://p.scdn.co/mp3-preview/5f6f6d2b88273e6cfc8ad8a76a8c02172a80afbd?cid=74f434552d40467782bc1bc64b12b2e9",
     },
     {
-      songName: "Song 2",
+      trackName: "Song 2",
       artistName: "Artist 2",
-      previewURL: 2,
+      previewURL:
+        "https://p.scdn.co/mp3-preview/d5e0f6280240fb57f91c73bd0c596c8ea56348d6?cid=74f434552d40467782bc1bc64b12b2e9",
     },
     {
-      songName: "Song 3",
+      trackName: "Song 3",
       artistName: "Artist 3",
-      previewURL: 3,
+      previewURL:
+        "https://p.scdn.co/mp3-preview/7b092bad4834dd01a0c84ab0733badb0af60e24b?cid=74f434552d40467782bc1bc64b12b2e9",
     },
     {
-      songName: "Song 4",
+      trackName: "Song 4",
       artistName: "Artist 4",
-      previewURL: 4,
+      previewURL:
+        "https://p.scdn.co/mp3-preview/7b092bad4834dd01a0c84ab0733badb0af60e24b?cid=74f434552d40467782bc1bc64b12b2e9",
     },
   ];
 
@@ -92,6 +96,34 @@ const Game = ({
       }
     }
   };
+  function AudioButton({ url }) {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [audio, setAudio] = useState(null);
+
+    const playAudio = () => {
+      const newAudio = new Audio(url);
+      newAudio.play();
+      setIsPlaying(true);
+      setAudio(newAudio);
+    };
+
+    const pauseAudio = () => {
+      if (audio) {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    };
+
+    return (
+      <div>
+        {isPlaying ? (
+          <button onClick={pauseAudio}>Pause Audio</button>
+        ) : (
+          <button onClick={playAudio}>Play Audio</button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -104,8 +136,9 @@ const Game = ({
           {[...songs].slice(0, numSongs).map((song) => (
             <div key={song.artistName}>
               <button onClick={() => handleSelectSong(song)}>
-                <p>{song.songName}</p>
+                <p>{song.trackName}</p>
               </button>
+              <AudioButton url={song.previewURL} />
             </div>
           ))}
         </div>
