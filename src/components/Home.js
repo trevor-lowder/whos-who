@@ -10,11 +10,12 @@ const TOKEN_KEY = 'whos-who-access-token'
 const Home = () => {
   const [genres, setGenres] = useState([])
   const [selectedGenre, setSelectedGenre] = useState('pop')
-  const [songCount, setSongCount] = useState('1')
-  const [artistPerChoice, setArtistPerChoice] = useState('2')
+  const [songCount, setSongCount] = useState(1)
+  const [artistPerChoice, setArtistPerChoice] = useState(2)
   const [authLoading, setAuthLoading] = useState(false)
   const [configLoading, setConfigLoading] = useState(false)
   const [token, setToken] = useState('')
+  const [attempts, setAttempts] = useState(3)
   const [songs, setSongs] = useState([])
   const [artists, setArtists] = useState([])
   // const [artImg, setArtImg] = useState('')
@@ -133,7 +134,8 @@ const Home = () => {
       "gameSettings", JSON.stringify({
         selectedGenre: selectedGenre,
         numSongs: songCount,
-        numArtists: artistPerChoice
+        numArtists: artistPerChoice,
+        numAttempts: attempts
       })
     )
   }
@@ -149,11 +151,13 @@ const Home = () => {
 
     const numArtist = randomize(2, 4)
     const numSong = randomize(1, 3)
+    const attempts = randomize(1, 5)
     const randGenre = genres[Math.floor(Math.random() * genres.length)]
 
     setArtistPerChoice(numArtist);
     setSongCount(numSong);
     setSelectedGenre(randGenre);
+    setAttempts(attempts)
 
     updateLocalStorageGameSettings(randGenre, numSong, numArtist)
 
@@ -240,6 +244,17 @@ const Home = () => {
         <option value='2'>2</option>
         <option value='3'>3</option>
         <option value='4'>4</option>
+      </select>
+      Number of Attempts per Game:
+      <select
+        value={attempts}
+        onChange={event => setAttempts(event.target.value)}
+      >
+        <option value='1'>1</option>
+        <option value='2'>2</option>
+        <option value='3'>3</option>
+        <option value='4'>4</option>
+        <option value='5'>5</option>
       </select>
       <Link to={'/play'}>
         <button
