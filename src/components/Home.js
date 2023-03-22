@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
+import { async } from 'regenerator-runtime'
 import fetchFromSpotify, { request } from '../services/api'
 
 const AUTH_ENDPOINT =
@@ -31,6 +32,7 @@ const Home = () => {
 
   const searchGenre = async () => {
     console.log("songs ", songCount, " numArt ", artistPerChoice, " genre ", selectedGenre)
+    // const history = useHistory()
     let songsToAdd = []
     let artistToGetById = []
     let artistToAdd = []
@@ -39,17 +41,16 @@ const Home = () => {
       token: token,
       endpoint: 'search',
       params: {
-        q: 'genre%3A' + selectedGenre,
+        q: 'genre%3A' + JSON.parse(localStorage.getItem("gameSettings")).selectedGenre,
         type: 'artist%2Ctrack',
         // market: 'US',
-        limit: artistPerChoice,
+        limit: 50,
         offset: 0
       }
     }).then(response => {
       // console.log("response is ", response),
       response.tracks.items.forEach(track => {
         artistToGetById.push(track.artists[0].id),
-          // console.log("artists ids ", artistToGetById),
           songsToAdd.push(
             {
               trackName: track.name,
@@ -57,18 +58,9 @@ const Home = () => {
               previewURL: track.preview_url
             }
           )
-
-        // console.log("track ", track),
-        //   console.log("track artist ", track.artists[0].name),
-        //   console.log("track artist id ", track.artists[0].id),
-        //   console.log("track name ", track.name),
-        //   console.log("track preview ", track.preview_url)
       })
 
       response.artists.items.forEach(artist => {
-        // console.log("artist ", artist),
-        //   console.log("artist name ", artist.name),
-        //   console.log("artist img ", artist.images[2])
         artistToAdd.push(
           {
             artistName: artist.name,
@@ -80,18 +72,29 @@ const Home = () => {
       setSongs(songsToAdd)
       setArtists(artistToAdd)
 
+    }).then(response => {
+      console.log("asdfasdf ", response, songs, artists)
       localStorage.setItem(
-        "gameSettings", JSON.stringify({
-          selectedGenre: selectedGenre,
-          numSongs: songCount,
-          numArtists: artistPerChoice,
-          songs: songs,
-          artists: artists
+        "apiResults", JSON.stringify({
+          songs: songsToAdd,
+          artists: artistToAdd
         }))
 
+
+
+
+
     })
+  }
 
-
+  const updateLocalStorageGameSettings = (selectedGenre, songCount, artistPerChoice) => {
+    localStorage.setItem(
+      "gameSettings", JSON.stringify({
+        selectedGenre: selectedGenre,
+        numSongs: songCount,
+        numArtists: artistPerChoice
+      })
+    )
   }
 
   const randomize = (min, max) => {
@@ -99,6 +102,23 @@ const Home = () => {
     max = Math.floor(max)
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
+
+  const randomGame = async () => {
+
+    const numArtist = randomize(2, 4)
+    const numSong = randomize(1, 3)
+    const randGenre = genres[Math.floor(Math.random() * genres.length)]
+
+    setArtistPerChoice(numArtist);
+    setSongCount(numSong);
+    setSelectedGenre(randGenre);
+
+    updateLocalStorageGameSettings(randGenre, numSong, numArtist)
+
+
+
+  }
+
 
   useEffect(() => {
     setAuthLoading(true)
@@ -169,7 +189,6 @@ const Home = () => {
         <option value='2'>2</option>
         <option value='3'>3</option>
       </select>
-      {/* {console.log("soung count " + songCount)} */}
 
       Number of Artists per Choice:
       <select
@@ -180,32 +199,26 @@ const Home = () => {
         <option value='3'>3</option>
         <option value='4'>4</option>
       </select>
-      {/* {console.log("artist " + artistPerChoice)} */}
-      {/* {console.log(selectedGenre)} */}
-      <Link to={"/play"}>
+      <Link to={'/play'}>
         <button
           onClick={() => {
-            // { console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre) }
+            updateLocalStorageGameSettings(selectedGenre, songCount, artistPerChoice)
             searchGenre()
           }}
         >
           Start Game!
         </button>
+
+        <button
+          onClick={() => {
+            randomGame()
+            searchGenre()
+          }}
+        >
+          Random Game
+        </button>
       </Link>
-      {console.log("songs to pass ", songs)}
-      {console.log("artists to pass ", artists)}
-
-      <button
-        onClick={() => {
-          setArtistPerChoice(randomize(2, 4));
-          setSongCount(randomize(1, 3));
-          setSelectedGenre(genres[Math.floor(Math.random() * genres.length)]);
-          { console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre) }
-          searchGenre()
-        }}
-
-      >
-        Randomize Game</button>
+      {console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre)}
     </div >
   )
 }
