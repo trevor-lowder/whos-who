@@ -1,51 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 const Game = ({ numAttempts = 3 }) => {
-  /*   let artists = [
-    {
-      artistName: "Artist 1",
-      artistImg: "https://via.placeholder.com/150",
-    },
-    {
-      artistName: "Artist 2",
-      artistImg: "https://via.placeholder.com/150",
-    },
-    {
-      artistName: "Artist 3",
-      artistImg: "https://via.placeholder.com/150",
-    },
-    {
-      artistName: "Artist 4",
-      artistImg: "https://via.placeholder.com/150",
-    },
-  ]; */
-
-  /* let songs = [
-    {
-      trackName: "Song 1",
-      artistName: "Artist 1",
-      previewURL:
-        "https://p.scdn.co/mp3-preview/5f6f6d2b88273e6cfc8ad8a76a8c02172a80afbd?cid=74f434552d40467782bc1bc64b12b2e9",
-    },
-    {
-      trackName: "Song 2",
-      artistName: "Artist 2",
-      previewURL:
-        "https://p.scdn.co/mp3-preview/d5e0f6280240fb57f91c73bd0c596c8ea56348d6?cid=74f434552d40467782bc1bc64b12b2e9",
-    },
-    {
-      trackName: "Song 3",
-      artistName: "Artist 3",
-      previewURL:
-        "https://p.scdn.co/mp3-preview/7b092bad4834dd01a0c84ab0733badb0af60e24b?cid=74f434552d40467782bc1bc64b12b2e9",
-    },
-    {
-      trackName: "Song 4",
-      artistName: "Artist 4",
-      previewURL:
-        "https://p.scdn.co/mp3-preview/7b092bad4834dd01a0c84ab0733badb0af60e24b?cid=74f434552d40467782bc1bc64b12b2e9",
-    },
-  ]; */
 
   /*   // Get random 'numArtists' artists
   const shuffledArtists = artists.sort(() => 0.5 - Math.random()); // Shuffle the array
