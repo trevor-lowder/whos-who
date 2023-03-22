@@ -27,6 +27,24 @@ const Game = ({ numAttempts = 3 }) => {
   useEffect(() => {
     const spotifyData = localStorage.getItem("apiResults");
     const settings = localStorage.getItem("gameSettings");
+    const genre = JSON.parse(
+      localStorage.getItem("gameSettings")
+    ).selectedGenre;
+    const numArtists = JSON.parse(
+      localStorage.getItem("gameSettings")
+    ).numArtists;
+    const numSongs = JSON.parse(localStorage.getItem("gameSettings")).numSongs;
+    const attempts = JSON.parse(
+      localStorage.getItem("gameSettings")
+    ).numAttempts;
+
+    console.log("THESE ARE ", genre, numArtists, numSongs);
+
+    setGenre(genre);
+   
+    setAttempts(attempts);
+
+    populateSongsArtists(numArtists, numSongs);
     setArtists(JSON.parse(spotifyData).artists);
     setSongs(JSON.parse(spotifyData).songs);
     setGameSettings(JSON.parse(settings));
