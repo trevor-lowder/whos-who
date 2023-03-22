@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Game = ({
   genre = "pop",
@@ -61,11 +61,24 @@ const Game = ({
   const shuffledSongs = songs.sort(() => 0.5 - Math.random()); // Shuffle the array
   const selectedSongs = shuffledSongs.slice(0, numSongs); // Get a new array with 'numArtists' items */
   // Game state
-  const [selectedSong, setSelectedSong] = useState(null);
-  const [selectedArtist, setSelectedArtist] = useState(null);
+  const [data, setData] = useState([]);
+  const [gameSettings, setGameSettings] = useState([]);
+  const [selectedSong, setSelectedSong] = useState(false);
+  const [selectedArtist, setSelectedArtist] = useState(false);
   const [attempts, setAttempts] = useState(numAttempts);
   const [score, setScore] = useState(0);
+
+
+
   // Game logic
+  useEffect(() => {
+    const spotifyData = localStorage.getItem("apiResults");
+    const settings = localStorage.getItem("gameSettings");
+    setData(JSON.parse(spotifyData));
+    setGameSettings(JSON.parse(settings));
+    
+  }, []);
+  
   const handleSelectSong = (song) => {
     setSelectedSong(song);
     if (selectedArtist !== null) {
@@ -127,13 +140,15 @@ const Game = ({
 
   return (
     <div>
-      <h1>{genre.toLocaleUpperCase()} Music Game</h1>
+      {console.log("gameSettings", gameSettings)}
+      {console.log("spotifyData", data)}
+      <h1>{gameSettings.selectedGenre} Music Game</h1>
       <h2>Current Score: {score}</h2>
       <p>Attempts: {attempts}</p>
       <div>
         <h2>Songs</h2>
         <div>
-          {[...songs].slice(0, numSongs).map((song) => (
+          {[...songs].slice(0, gameSettings.numSongs).map((song) => (
             <div key={song.artistName}>
               <button onClick={() => handleSelectSong(song)}>
                 <p>{song.trackName}</p>
@@ -144,7 +159,7 @@ const Game = ({
         </div>
         <h2>Artists</h2>
         <div>
-          {[...artists].slice(0, numArtists).map((artist) => (
+          {[...artists].slice(0, gameSettings.numArtists).map((artist) => (
             <div key={artist.artistName}>
               <div>
                 <img src={artist.artistImg} alt={artist.artistName} />
