@@ -73,31 +73,31 @@ const Game = ({ numAttempts = 3 }) => {
 
   const handleSelectSong = (song) => {
     setSelectedSong(song);
-    if (selectedArtist !== null) {
+    if (selectedArtist !== false) {
       if (song.artistName !== selectedArtist.artistName) {
         setAttempts(attempts - 1);
-        setSelectedSong(null);
-        setSelectedArtist(null);
+        setSelectedSong(false);
+        setSelectedArtist(false);
       }
       if (song.artistName == selectedArtist.artistName) {
         setAttempts(score + 10);
-        setSelectedSong(null);
-        setSelectedArtist(null);
+        setSelectedSong(false);
+        setSelectedArtist(false);
       }
     }
   };
   const handleSelectArtist = (artist) => {
     setSelectedArtist(artist);
-    if (selectedSong !== null) {
+    if (selectedSong !== false) {
       if (selectedSong.artistName !== artist.artistName) {
         setAttempts(attempts - 1);
-        setSelectedSong(null);
-        setSelectedArtist(null);
+        setSelectedSong(false);
+        setSelectedArtist(false);
       }
       if (selectedSong.artistName == artist.artistName) {
         setScore(score + 10);
-        setSelectedSong(null);
-        setSelectedArtist(null);
+        setSelectedSong(false);
+        setSelectedArtist(false);
       }
     }
   };
