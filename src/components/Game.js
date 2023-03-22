@@ -27,29 +27,41 @@ const Game = ({ numAttempts = 3 }) => {
   useEffect(() => {
     const spotifyData = localStorage.getItem("apiResults");
     const settings = localStorage.getItem("gameSettings");
-    const genre = JSON.parse(
-      localStorage.getItem("gameSettings")
-    ).selectedGenre;
-    const numArtists = JSON.parse(
-      localStorage.getItem("gameSettings")
-    ).numArtists;
-    const numSongs = JSON.parse(localStorage.getItem("gameSettings")).numSongs;
-    const attempts = JSON.parse(
-      localStorage.getItem("gameSettings")
-    ).numAttempts;
 
-    console.log("THESE ARE ", genre, numArtists, numSongs);
-
-    setGenre(genre);
-   
-    setAttempts(attempts);
-
-    populateSongsArtists(numArtists, numSongs);
     setArtists(JSON.parse(spotifyData).artists);
     setSongs(JSON.parse(spotifyData).songs);
+    setAttempts(JSON.parse(settings).numAttempts);
     setGameSettings(JSON.parse(settings));
+    populateSongsArtists(settings.numArtists, settings.numSongs);
   }, []);
+  const populateSongsArtists = (numArtists, numSongs) => {
+    const allArtists = JSON.parse(localStorage.getItem("apiResults")).artists;
+    const allSongs = JSON.parse(localStorage.getItem("apiResults")).songs;
 
+    if (artists.length > 0) setArtists([]);
+    if (songs.length > 0) setSongs([]);
+
+    while (songs.length < numSongs) {
+      songs.push(allSongs.pop());
+    }
+
+    for (let item of songs) {
+      artists.push(allArtists.find((e) => e.artistName === item.artistName));
+    }
+
+    for (let i = 0; artists.length < numArtists; i++) {
+      if (artists[i].artistName !== allArtists[i].artistName)
+        artists.push(allArtists[i]);
+    }
+
+    localStorage.setItem(
+      "apiResults",
+      JSON.stringify({
+        songs: allSongs,
+        artists: allArtists,
+      })
+    );
+  };
   const handleSelectSong = (song) => {
     setSelectedSong(song);
     if (selectedArtist !== false) {
