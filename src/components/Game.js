@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
-
+const GameOverModal = ({ score }) => {
+  return (
+    <>
+      <div>
+        <h2>Game Over</h2>
+        <h4>Final Score: {score}</h4>
+        <div>
+          <button>Try Again</button>
+          <button>Home</button>
+        </div>
+      </div>
+    </>
+  );
+};
 const Game = ({ numAttempts = 3 }) => {
-
-  /*   // Get random 'numArtists' artists
-  const shuffledArtists = artists.sort(() => 0.5 - Math.random()); // Shuffle the array
-  const selectedArtists = shuffledArtists.slice(0, numArtists); // Get a new array with 'numArtists' items
-  // Get random 'numSongs' songs
-  const shuffledSongs = songs.sort(() => 0.5 - Math.random()); // Shuffle the array
-  const selectedSongs = shuffledSongs.slice(0, numSongs); // Get a new array with 'numArtists' items */
   // Game state
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
@@ -87,8 +93,7 @@ const Game = ({ numAttempts = 3 }) => {
 
   return (
     <div>
-      {console.log("gameSettings", gameSettings)}
-      {console.log("songs", songs)}
+      <GameOverModal score={score} />
       <h1>{gameSettings.selectedGenre} Music Game</h1>
       <h2>Current Score: {score}</h2>
       <p>Attempts: {attempts}</p>
@@ -96,7 +101,8 @@ const Game = ({ numAttempts = 3 }) => {
         <h2>Songs</h2>
         <div>
           {[...songs].slice(0, gameSettings.numSongs).map((song) => (
-            <div key={song.artistName}>
+            <div key={song.trackName}>
+              {console.log(song)}
               <button onClick={() => handleSelectSong(song)}>
                 <p>{song.trackName}</p>
               </button>
