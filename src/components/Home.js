@@ -141,15 +141,14 @@ const Home = () => {
       )
     })
 
-    setSongs(songsToAdd)
-    setArtists(artistToAdd)
+    // setSongs(songsToAdd)
+    // setArtists(artistToAdd)
 
     localStorage.setItem(
       "apiResults", JSON.stringify({
         songs: songsToAdd,
         artists: artistToAdd
       }))
-
 
   }
 
