@@ -307,6 +307,7 @@ const Home = () => {
           <InputLabel htmlFor="number-of-artists">Artists:</InputLabel>
           <Select
             native
+            label="Artists"
             id="number-of-artists"
             value={artistPerChoice}
             onChange={(event) => setArtistPerChoice(event.target.value)}
@@ -324,6 +325,7 @@ const Home = () => {
           <InputLabel htmlFor="number-of-attempts"> Attempts:</InputLabel>
           <Select
             native
+            label="Attempts"
             id="number-of-attempts"
             value={attempts}
             onChange={(event) => setAttempts(event.target.value)}
@@ -340,9 +342,10 @@ const Home = () => {
           margin="dense"
           style={{ marginBottom: 10 }}
         >
-          <InputLabel htmlFor="allow-explicit-songs">Explicit:</InputLabel>
+          <InputLabel htmlFor="allow-explicit-songs">Explicit?:</InputLabel>
           <Select
             native
+            label="Explicit?"
             id="allow-explicit-songs"
             value={explicit}
             onChange={(event) => setExplicit(event.target.value)}
