@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 import _ from "lodash";
 import FavoriteIcon from "@material-ui/icons/Favorite";
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
 const Game = () => {
   // Game state
   const [artists, setArtists] = useState([]);
@@ -195,7 +197,7 @@ const Game = () => {
                         handlePlayPause(song);
                       }}
                     >
-                      Pause
+                      <PauseIcon/>
                     </Button>
                   ) : (
                     <Button
@@ -203,7 +205,7 @@ const Game = () => {
                         handlePlayPause(song);
                       }}
                     >
-                      Play
+                      <PlayArrowIcon/>
                     </Button>
                   )}
                 </div>
