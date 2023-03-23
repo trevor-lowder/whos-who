@@ -17,6 +17,7 @@ const Home = () => {
   const [token, setToken] = useState('')
   const [attempts, setAttempts] = useState(3)
   const [songs, setSongs] = useState([])
+  const [explicit, setExplicit] = useState(false)
   const [artists, setArtists] = useState([])
   // const [artImg, setArtImg] = useState('')
 
@@ -51,28 +52,51 @@ const Home = () => {
       }
     })
 
-    // console.log("response is ", response),
-    response.tracks.items.forEach(track => {
-      artistToGetById.push(track.artists[0].id)
-      if (track.preview_url) {
-        songsToAdd.push(
-          {
-            trackName: track.name,
-            artistName: track.artists[0].name,
-            previewURL: track.preview_url
+
+    console.log("response is ", response),
+      response.tracks.items.forEach(track => {
+        artistToGetById.push(track.artists[0].id)
+        if (!explicit) {
+          if (track.preview_url && !track.explicit) {
+            songsToAdd.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                previewURL: track.preview_url
+              }
+            )
           }
-        )
-      }
-      else {
-        noPreview.push(
-          {
-            trackName: track.name,
-            artistName: track.artists[0].name,
-            trackId: track.id
+          else {
+            noPreview.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                trackId: track.id
+              }
+            )
           }
-        )
-      }
-    })
+        }
+        else {
+          if (track.preview_url) {
+            songsToAdd.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                previewURL: track.preview_url
+              }
+            )
+          }
+          else {
+            noPreview.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                trackId: track.id
+              }
+            )
+          }
+        }
+      })
 
     // console.log("noPreviews ", noPreview)
     // console.log("songsToAdd ", songsToAdd)
@@ -135,7 +159,8 @@ const Home = () => {
         selectedGenre: selectedGenre,
         numSongs: songCount,
         numArtists: artistPerChoice,
-        numAttempts: attempts
+        numAttempts: attempts,
+        explicit: explicit
       })
     )
   }
@@ -255,6 +280,14 @@ const Home = () => {
         <option value='3'>3</option>
         <option value='4'>4</option>
         <option value='5'>5</option>
+      </select>
+      Allow Explicit Songs:
+      <select
+        value={explicit}
+        onChange={event => setExplicit(event.target.value)}
+      >
+        <option value='true'>Yes</option>
+        <option value='false'>No</option>
       </select>
       <Link to={'/play'}>
         <button
