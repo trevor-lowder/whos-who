@@ -215,7 +215,6 @@ const Home = () => {
       maxWidth="lg"
       sx={{ height: "100%", padding: 0, overflow: "hidden" }}
     >
-      <Modal solution={'correct answer'} score={100}></Modal>
       <Box
         sx={{
           display: "flex",
