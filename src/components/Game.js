@@ -221,12 +221,11 @@ const Game = () => {
                 <Grid key={index} container spacing={2}>
                   {chunk.map((artist) => (
                     <Grid key={artist.artistName} item xs={12} sm={6}>
-                      <div>
-                        <img src={artist.artistImg} alt={artist.artistName} />
-                      </div>
                       <Button onClick={() => handleSelectArtist(artist)}>
-                        <p>{artist.artistName}</p>
+                      <div><img onClick={() => handleSelectArtist(artist)} src={artist.artistImg} alt={artist.artistName} />
+                      <p>{artist.artistName}</p></div>
                       </Button>
+                      
                     </Grid>
                   ))}
                 </Grid>
