@@ -223,14 +223,17 @@ const Home = () => {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container
+      maxWidth="100%"
+      sx={{ height: "100%", padding: 0, overflow: "hidden" }}
+    >
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
           textAlign: "center",
-          my: "20rem",
+          marginTop: '10rem'
         }}
       >
         <Typography variant="h2">Spotify Guessing Game</Typography>
@@ -342,7 +345,9 @@ const Home = () => {
           margin="dense"
           style={{ marginBottom: 10 }}
         >
-          <InputLabel htmlFor="allow-explicit-songs">Include explicit songs?:</InputLabel>
+          <InputLabel htmlFor="allow-explicit-songs">
+            Include explicit songs?:
+          </InputLabel>
           <Select
             native
             label="Include explicit songs?"
