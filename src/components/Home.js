@@ -342,10 +342,10 @@ const Home = () => {
           margin="dense"
           style={{ marginBottom: 10 }}
         >
-          <InputLabel htmlFor="allow-explicit-songs">Explicit?:</InputLabel>
+          <InputLabel htmlFor="allow-explicit-songs">Include explicit songs?:</InputLabel>
           <Select
             native
-            label="Explicit?"
+            label="Include explicit songs?"
             id="allow-explicit-songs"
             value={explicit}
             onChange={(event) => setExplicit(event.target.value)}
