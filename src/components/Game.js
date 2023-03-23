@@ -22,6 +22,8 @@ const Game = ({ numAttempts = 3 }) => {
   const [selectedArtist, setSelectedArtist] = useState(false);
   const [attempts, setAttempts] = useState(numAttempts);
   const [score, setScore] = useState(0);
+  const [currentAudio, setCurrentAudio] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Game logic
   useEffect(() => {
@@ -92,34 +94,22 @@ const Game = ({ numAttempts = 3 }) => {
       }
     }
   };
-  function AudioButton({ url }) {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [audio, setAudio] = useState(null);
-
-    const playAudio = () => {
-      const newAudio = new Audio(url);
-      newAudio.play();
-      setIsPlaying(true);
-      setAudio(newAudio);
-    };
-
-    const pauseAudio = () => {
-      if (audio) {
-        audio.pause();
-        setIsPlaying(false);
+  const handlePlayPause = (song) => {
+    if (currentAudio !== null) {
+      if (!currentAudio.paused && currentAudio.src === song.previewURL) {
+        currentAudio.pause();
+        setIsPlaying(false); // pause current song if it's playing and the same song is clicked again
+        return;
+      } else {
+        currentAudio.pause();
+        setIsPlaying(false); // pause current song if a different song is clicked
       }
-    };
-
-    return (
-      <div>
-        {isPlaying ? (
-          <button onClick={pauseAudio}>Pause Audio</button>
-        ) : (
-          <button onClick={playAudio}>Play Audio</button>
-        )}
-      </div>
-    );
-  }
+    }
+    const audio = new Audio(song.previewURL);
+    setCurrentAudio(audio);
+    audio.play();
+    setIsPlaying(true);
+  };
 
   return (
     <div>
@@ -132,11 +122,26 @@ const Game = ({ numAttempts = 3 }) => {
         <div>
           {[...songs].slice(0, gameSettings.numSongs).map((song) => (
             <div key={song.trackName}>
-              {console.log(song)}
               <button onClick={() => handleSelectSong(song)}>
                 <p>{song.trackName}</p>
               </button>
-              <AudioButton url={song.previewURL} />
+              {isPlaying && currentAudio.src === song.previewURL ? (
+                <button
+                  onClick={() => {
+                    handlePlayPause(song);
+                  }}
+                >
+                  Pause
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    handlePlayPause(song);
+                  }}
+                >
+                  Play
+                </button>
+              )}
             </div>
           ))}
         </div>
