@@ -1,7 +1,7 @@
 import { Box, Button, Container, Grid, Typography } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
-import _ from 'lodash';
+import _ from "lodash";
 
 const Game = ({ numAttempts = 3 }) => {
   // Game state
@@ -153,65 +153,73 @@ const Game = ({ numAttempts = 3 }) => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          textAlign:'center',
-          marginTop:'5rem'
+          textAlign: "center",
+          marginTop: "5rem",
         }}
       >
         <Typography variant="h2" gutterBottom>
           {gameSettings.selectedGenre} Music Game
         </Typography>
-        <Typography variant="h4" gutterBottom>Current Score: {score}</Typography>
-        <Typography variant="h5" gutterBottom>Attempts: {attempts}</Typography>
+        <Typography variant="h4" gutterBottom>
+          Current Score: {score}
+        </Typography>
+        <Typography variant="h5" gutterBottom>
+          Attempts: {attempts}
+        </Typography>
         <Grid container spacing={2}>
-    <Grid item xs={12} sm={6}>
-      <Typography variant="h4" gutterBottom>Songs</Typography>
-      <div>
-        {[...songs].map((song) => (
-          <div key={song.trackName}>
-            <Button onClick={() => handleSelectSong(song)}>
-              <p>{song.trackName}</p>
-            </Button>
-            {isPlaying && currentAudio.src === song.previewURL ? (
-              <Button
-                onClick={() => {
-                  handlePlayPause(song);
-                }}
-              >
-                Pause
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  handlePlayPause(song);
-                }}
-              >
-                Play
-              </Button>
-            )}
-          </div>
-        ))}
-      </div>
-    </Grid>
-    <Grid item xs={12} sm={6}>
-      <Typography variant="h4" gutterBottom>Artists</Typography>
-      <div>
-        {_.chunk([...artists], 2).map((chunk, index) => (
-          <Grid key={index} container spacing={2}>
-            {chunk.map((artist) => (
-              <Grid key={artist.artistName} item xs={12} sm={6}>
-                <div>
-                  <img src={artist.artistImg} alt={artist.artistName} />
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h4" gutterBottom>
+              Songs
+            </Typography>
+            <div>
+              {[...songs].map((song) => (
+                <div key={song.trackName}>
+                  <Button onClick={() => handleSelectSong(song)}>
+                    <p>{song.trackName}</p>
+                  </Button>
+                  {isPlaying && currentAudio.src === song.previewURL ? (
+                    <Button
+                      onClick={() => {
+                        handlePlayPause(song);
+                      }}
+                    >
+                      Pause
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        handlePlayPause(song);
+                      }}
+                    >
+                      Play
+                    </Button>
+                  )}
                 </div>
-                <Button onClick={() => handleSelectArtist(artist)}>
-                  <p>{artist.artistName}</p>
-                </Button>
-              </Grid>
-            ))}
+              ))}
+            </div>
           </Grid>
-        ))}
-      </div>
-    </Grid>
-  </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="h4" gutterBottom>
+              Artists
+            </Typography>
+            <div>
+              {_.chunk([...artists], 2).map((chunk, index) => (
+                <Grid key={index} container spacing={2}>
+                  {chunk.map((artist) => (
+                    <Grid key={artist.artistName} item xs={12} sm={6}>
+                      <div>
+                        <img src={artist.artistImg} alt={artist.artistName} />
+                      </div>
+                      <Button onClick={() => handleSelectArtist(artist)}>
+                        <p>{artist.artistName}</p>
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+              ))}
+            </div>
+          </Grid>
+        </Grid>
         {showModal && (
           <Modal
             won={won}
