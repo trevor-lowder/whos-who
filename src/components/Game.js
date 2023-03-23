@@ -1,18 +1,7 @@
 import React, { useState, useEffect } from "react";
-const GameOverModal = ({ score }) => {
-  return (
-    <>
-      <div>
-        <h2>Game Over</h2>
-        <h4>Final Score: {score}</h4>
-        <div>
-          <button>Try Again</button>
-          <button>Home</button>
-        </div>
-      </div>
-    </>
-  );
-};
+import Modal from "./Modal";
+
+
 const Game = ({ numAttempts = 3 }) => {
   // Game state
   const [artists, setArtists] = useState([]);
@@ -24,18 +13,30 @@ const Game = ({ numAttempts = 3 }) => {
   const [score, setScore] = useState(0);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showModal, setShowModal] = useState(false)
+  const [won, setWon] = useState(false)
+  const [matches, setMatches] = useState(0)  //should be set to NumOfSongs and decremented for every correct match and won set to true at 0
+  const [gameOver, setGameOver] = useState(false) //not sure if needs to be state, but gameOver is set to true if the remaining songs from localStorage is less than songs to play game
+  const [solution, setSolution] = useState('') //again this probably doesn't need to be state should probalby just pass in the songs list for the round
 
   // Game logic
   useEffect(() => {
-    const spotifyData = localStorage.getItem("apiResults");
-    const settings = localStorage.getItem("gameSettings");
+    // const spotifyData = JSON.parse(localStorage.getItem("apiResults"));
+    const settings = JSON.parse(localStorage.getItem("gameSettings"));
 
-    setArtists(JSON.parse(spotifyData).artists);
-    setSongs(JSON.parse(spotifyData).songs);
-    setAttempts(JSON.parse(settings).numAttempts);
-    setGameSettings(JSON.parse(settings));
+    // setArtists(spotifyData.artists);
+    // setSongs(spotifyData.songs);
+    setAttempts(settings.numAttempts);
+    setGameSettings(settings);
+    setMatches(settings.numSongs)
+    console.log("Page Loading", settings, settings.numArtists, settings.numSongs)
+
     populateSongsArtists(settings.numArtists, settings.numSongs);
+
+    // populateSongsArtists(settings.numArtists, settings.numSongs);
+
   }, []);
+
   const populateSongsArtists = (numArtists, numSongs) => {
     const allArtists = JSON.parse(localStorage.getItem("apiResults")).artists;
     const allSongs = JSON.parse(localStorage.getItem("apiResults")).songs;
@@ -43,19 +44,30 @@ const Game = ({ numAttempts = 3 }) => {
     if (artists.length > 0) setArtists([]);
     if (songs.length > 0) setSongs([]);
 
+    console.log(allSongs.length, numSongs)
+    if (allSongs.length <= numSongs) {
+      setGameOver(true)
+      setShowModal(true)
+      return
+    }
+
     while (songs.length < numSongs) {
       songs.push(allSongs.pop());
     }
+    console.log("Starting songs ", songs)
 
     for (let item of songs) {
       artists.push(allArtists.find((e) => e.artistName === item.artistName));
     }
-
-    for (let i = 0; artists.length < numArtists; i++) {
-      if (artists[i].artistName !== allArtists[i].artistName)
-        artists.push(allArtists[i]);
+    console.log("starting Artists ", artists)
+    while (artists.length < numArtists) {
+      let tempArtist = allArtists[Math.floor(Math.random() * allArtists.length)]
+      console.log("temp is ", tempArtist)
+      if (artists.artistName !== tempArtist.artistName)
+        artists.push(tempArtist);
     }
 
+    console.log("Finsihed artist ", artists)
     localStorage.setItem(
       "apiResults",
       JSON.stringify({
@@ -65,35 +77,56 @@ const Game = ({ numAttempts = 3 }) => {
     );
   };
   const handleSelectSong = (song) => {
+
+
+    console.log("Song is ", song)
     setSelectedSong(song);
+    // console.log("selectedSong is ", selectedSong)
     if (selectedArtist !== false) {
       if (song.artistName !== selectedArtist.artistName) {
         setAttempts(attempts - 1);
         setSelectedSong(false);
         setSelectedArtist(false);
+
+        if ((attempts - 1) === 0) {
+          setTimeout(() => setShowModal(true), 500)
+        }
+
       }
       if (song.artistName == selectedArtist.artistName) {
-        setAttempts(score + 10);
+        console.log("I'm Here and score is ", score)
+        setScore(score + 100);
         setSelectedSong(false);
         setSelectedArtist(false);
       }
     }
+
   };
   const handleSelectArtist = (artist) => {
+
+    console.log("Artist is ", artist)
     setSelectedArtist(artist);
+
     if (selectedSong !== false) {
       if (selectedSong.artistName !== artist.artistName) {
         setAttempts(attempts - 1);
         setSelectedSong(false);
         setSelectedArtist(false);
+
+        if ((attempts) === 0) {
+          setTimeout(() => setShowModal(true), 500)
+        }
+
       }
       if (selectedSong.artistName == artist.artistName) {
-        setScore(score + 10);
+        setScore(score + 100);
         setSelectedSong(false);
         setSelectedArtist(false);
       }
     }
+
   };
+
   const handlePlayPause = (song) => {
     if (currentAudio !== null) {
       if (!currentAudio.paused && currentAudio.src === song.previewURL) {
@@ -113,14 +146,14 @@ const Game = ({ numAttempts = 3 }) => {
 
   return (
     <div>
-      <GameOverModal score={score} />
       <h1>{gameSettings.selectedGenre} Music Game</h1>
       <h2>Current Score: {score}</h2>
       <p>Attempts: {attempts}</p>
       <div>
         <h2>Songs</h2>
         <div>
-          {[...songs].slice(0, gameSettings.numSongs).map((song) => (
+          {console.log("Songs is ", songs)}
+          {[...songs].map((song) => (
             <div key={song.trackName}>
               <button onClick={() => handleSelectSong(song)}>
                 <p>{song.trackName}</p>
@@ -147,7 +180,7 @@ const Game = ({ numAttempts = 3 }) => {
         </div>
         <h2>Artists</h2>
         <div>
-          {[...artists].slice(0, gameSettings.numArtists).map((artist) => (
+          {[...artists].map((artist) => (
             <div key={artist.artistName}>
               <div>
                 <img src={artist.artistImg} alt={artist.artistName} />
@@ -159,6 +192,8 @@ const Game = ({ numAttempts = 3 }) => {
           ))}
         </div>
       </div>
+      {/* {(attempts === 0) && setShowModal(true)} */}
+      {showModal && <Modal won={won} attempts={attempts} solution={solution} score={score} gameOver={gameOver} />}
     </div>
   );
 };
