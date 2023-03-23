@@ -2,15 +2,15 @@ import { Box, Button, Container, Grid, Typography } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 import _ from "lodash";
-
-const Game = ({ numAttempts = 3 }) => {
+import FavoriteIcon from "@material-ui/icons/Favorite";
+const Game = () => {
   // Game state
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [gameSettings, setGameSettings] = useState([]);
   const [selectedSong, setSelectedSong] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(false);
-  const [attempts, setAttempts] = useState(numAttempts);
+  const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -143,6 +143,18 @@ const Game = ({ numAttempts = 3 }) => {
     setIsPlaying(true);
   };
 
+  function HeartRow({ attempts }) {
+    const maxHearts = 5;
+    const numHearts = Math.min(attempts, maxHearts);
+    const hearts = [];
+
+    for (let i = 0; i < numHearts; i++) {
+      hearts.push(<FavoriteIcon key={i} color="secondary" />);
+    }
+
+    return <div>{hearts}</div>;
+  }
+
   return (
     <Container
       maxWidth="lg"
@@ -164,7 +176,7 @@ const Game = ({ numAttempts = 3 }) => {
           Current Score: {score}
         </Typography>
         <Typography variant="h5" gutterBottom>
-          Attempts: {attempts}
+          Attempts: <HeartRow attempts={attempts} />
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
