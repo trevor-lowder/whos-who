@@ -80,31 +80,33 @@ const Home = () => {
         artistToGetById.push(track.artists[0].id);
         if (!explicit) {
           if (track.preview_url && !track.explicit) {
-            songsToAdd.push({
-              trackName: track.name,
-              artistName: track.artists[0].name,
-              previewURL: track.preview_url,
-            });
-          } else {
-            noPreview.push({
-              trackName: track.name,
-              artistName: track.artists[0].name,
-              trackId: track.id,
-            });
+            songsToAdd.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                previewURL: track.preview_url
+              }
+            )
           }
-        } else {
+          else {
+            noPreview.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                trackId: track.id
+              }
+            )
+          }
+        }
+        else {
           if (track.preview_url) {
-            songsToAdd.push({
-              trackName: track.name,
-              artistName: track.artists[0].name,
-              previewURL: track.preview_url,
-            });
-          } else {
-            noPreview.push({
-              trackName: track.name,
-              artistName: track.artists[0].name,
-              trackId: track.id,
-            });
+            songsToAdd.push(
+              {
+                trackName: track.name,
+                artistName: track.artists[0].name,
+                previewURL: track.preview_url
+              }
+            )
           }
           else {
             noPreview.push(
@@ -197,9 +199,6 @@ const Home = () => {
     updateLocalStorageGameSettings(randGenre, numSong, numArtist)
   }
 
-
-    updateLocalStorageGameSettings(randGenre, numSong, numArtist);
-  };
 
   useEffect(() => {
     setAuthLoading(true);
