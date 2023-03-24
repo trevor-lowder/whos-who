@@ -123,11 +123,11 @@ const Game = ({ numAttempts = 3 }) => {
         setSelectedArtist(false);
         setMatches(matches + 1);
 
-        console.log("Song matches is ", matches, " +1 ", gameSettings.numSongs)
-        if ((matches + 1) === gameSettings.numSongs) {
-          console.log("Winner")
-          setWon(true)
-          setShowModal(true)
+        console.log("Song matches is ", matches, " +1 ", gameSettings.numSongs);
+        if (matches + 1 === gameSettings.numSongs) {
+          console.log("Winner");
+          setWon(true);
+          setShowModal(true);
         }
       }
     }
@@ -153,15 +153,19 @@ const Game = ({ numAttempts = 3 }) => {
         setSelectedSong(false);
         setSelectedArtist(false);
 
+        setMatches(matches + 1);
 
-        setMatches(matches + 1)
-
-        console.log("Artist matches is ", matches + 1, " +1 ", gameSettings.numSongs, (matches + 1) == gameSettings.numSongs)
-        if ((matches + 1) == gameSettings.numSongs) {
-          console.log("Winner")
-          setWon(true)
-          setShowModal(true)
-
+        console.log(
+          "Artist matches is ",
+          matches + 1,
+          " +1 ",
+          gameSettings.numSongs,
+          matches + 1 == gameSettings.numSongs
+        );
+        if (matches + 1 == gameSettings.numSongs) {
+          console.log("Winner");
+          setWon(true);
+          setShowModal(true);
         }
       }
     }
@@ -230,6 +234,7 @@ const Game = ({ numAttempts = 3 }) => {
                 [...songs].map((song) => (
                   <div key={song.trackName}>
                     <Button
+                      disabled={song == selectedSong}
                       style={{ fontSize: "20px" }}
                       onClick={() => handleSelectSong(song)}
                     >
@@ -267,6 +272,7 @@ const Game = ({ numAttempts = 3 }) => {
                     {chunk.map((artist) => (
                       <Grid key={artist.artistName} item xs={12} sm={6}>
                         <Button
+                          disabled={artist == selectedArtist}
                           style={{ fontSize: "18px" }}
                           onClick={() => handleSelectArtist(artist)}
                         >
