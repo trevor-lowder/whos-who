@@ -1,6 +1,9 @@
+
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { Button, Typography } from "@material-ui/core";
-import React from "react";
-import styled from "styled-components";
+import styled from 'styled-components'
+
 
 const ModalContainer = styled.div`
   background: rgba(255, 255, 255, 0.7);
@@ -9,7 +12,8 @@ const ModalContainer = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-`;
+`
+
 const ModalDiv = styled.div`
   max-width: 500px;
   background: #fff;
@@ -23,9 +27,9 @@ const ModalDiv = styled.div`
   margin: 10% auto;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 `;
-const LostDiv = styled.div``;
 
-const Modal = ({ won, attempts, solution, score, gameOver }) => {
+
+const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
   return (
     <ModalContainer>
       {won && (
@@ -38,8 +42,31 @@ const Modal = ({ won, attempts, solution, score, gameOver }) => {
             You cleared the round with {attempts} attempts left
           </Typography>
           <div>
-            <Button style={{ fontSize: "20px" }}>Try Again</Button>
-            <Button style={{ fontSize: "20px" }}>Home</Button>
+
+            <Link to={'/play'}>
+              <Button style={{ fontSize: "20px" }} onClick={onClose}>Play Again</Button>
+            </Link>
+            <Link to={'/'}>
+              <Button style={{ fontSize: "20px" }} onClick={() => {
+              }}>Reset and Go Home</Button>
+            </Link>
+
+          </div>
+        </ModalDiv>
+      )}
+      {gameOver && (
+        <ModalDiv>
+          <Typography variant="h3">Game Over</Typography>
+          <Typography variant="h4">Final score:{score}</Typography>
+          <Typography variant="h6">
+            Great game! You know you wanna play some more!!
+          </Typography>
+          <div>
+            <Link to={'/'}>
+              <Button style={{ fontSize: "20px" }} onClick={() => {
+              }}>Reset and Go Home</Button>
+            </Link>
+
           </div>
         </ModalDiv>
       )}
@@ -61,21 +88,14 @@ const Modal = ({ won, attempts, solution, score, gameOver }) => {
             Give it another try!
           </Typography>
           <div>
-            <Button style={{ fontSize: "20px" }}>Try Again</Button>
-            <Button style={{ fontSize: "20px" }}>Home</Button>
-          </div>
-        </ModalDiv>
-      )}
-      {gameOver && (
-        <ModalDiv>
-          <Typography variant="h3">Game Over</Typography>
-          <Typography variant="h4">Final score:{score}</Typography>
-          <Typography variant="h6">
-            Great game! You know you wanna play some more!!
-          </Typography>
-          <div>
-            <Button style={{ fontSize: "20px" }}>Try Again</Button>
-            <Button style={{ fontSize: "20px" }}>Home</Button>
+            <Link to={'/play'}>
+              <Button style={{ fontSize: "20px" }} onClick={onClose}>Try Again</Button>
+            </Link>
+            <Link to={'/'}>
+              <Button style={{ fontSize: "20px" }} onClick={() => {
+              }}>Reset and Go Home</Button>
+            </Link>
+
           </div>
         </ModalDiv>
       )}

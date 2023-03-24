@@ -1,81 +1,91 @@
+import React, { useState, useEffect, useReducer } from "react";
+import { useHistory } from "react-router";
 import { Box, Button, Container, Grid, Typography } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
-import Modal from "./Modal";
 import _ from "lodash";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
-const Game = () => {
+
+import Modal from "./Modal";
+
+
+const Game = ({ numAttempts = 3 }) => {
   // Game state
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [gameSettings, setGameSettings] = useState([]);
   const [selectedSong, setSelectedSong] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(false);
-  const [attempts, setAttempts] = useState(0);
+  const [attempts, setAttempts] = useState(numAttempts);
   const [score, setScore] = useState(0);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [won, setWon] = useState(false);
-  const [matches, setMatches] = useState(0); //should be set to NumOfSongs and decremented for every correct match and won set to true at 0
-  const [gameOver, setGameOver] = useState(false); //not sure if needs to be state, but gameOver is set to true if the remaining songs from localStorage is less than songs to play game
-  const [solution, setSolution] = useState(""); //again this probably doesn't need to be state should probalby just pass in the songs list for the round
+  const [showModal, setShowModal] = useState(false)
+  const [won, setWon] = useState(false)
+  const [matches, setMatches] = useState(0)  //should be set to NumOfSongs and decremented for every correct match and won set to true at 0
+  const [gameOver, setGameOver] = useState(false) //not sure if needs to be state, but gameOver is set to true if the remaining songs from localStorage is less than songs to play game
+  const [solution, setSolution] = useState('') //again this probably doesn't need to be state should probalby just pass in the songs list for the round
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [count, setCount] = useState(0)
+  // const [allSongs, setAllSongs] = useState([])
+  // const [allArtists, setAllArtists] = useState([])
 
   // Game logic
   useEffect(() => {
-    // const spotifyData = JSON.parse(localStorage.getItem("apiResults"));
-    const settings = JSON.parse(localStorage.getItem("gameSettings"));
 
-    // setArtists(spotifyData.artists);
-    // setSongs(spotifyData.songs);
-    setAttempts(settings.numAttempts);
-    setGameSettings(settings);
-    setMatches(settings.numSongs);
-    console.log(
-      "Page Loading",
-      settings,
-      settings.numArtists,
-      settings.numSongs
-    );
+    setTimeout(() => {
+      const settings = JSON.parse(localStorage.getItem("gameSettings"));
 
-    populateSongsArtists(settings.numArtists, settings.numSongs);
+      setAttempts(settings.numAttempts);
+      setGameSettings(settings);
+      setShowModal(false)
+      // setMatches(settings.numSongs)
+      console.log("Page Loading", settings, settings.numArtists, settings.numSongs)
 
-    // populateSongsArtists(settings.numArtists, settings.numSongs);
+
+      // if (localStorage.getItem("apiResults") !== "null")
+      populateSongsArtists(settings.numArtists, settings.numSongs);
+      forceUpdate()
+    }, 1000)
+
   }, []);
 
   const populateSongsArtists = (numArtists, numSongs) => {
     const allArtists = JSON.parse(localStorage.getItem("apiResults")).artists;
     const allSongs = JSON.parse(localStorage.getItem("apiResults")).songs;
 
+    // setAllSongs(allSongs)
+    // setAllArtists(allArtists)
+
+    console.log("ASLDKFJSDLKFJ ", allSongs)
+
     if (artists.length > 0) setArtists([]);
     if (songs.length > 0) setSongs([]);
 
-    console.log(allSongs.length, numSongs);
+    console.log(allSongs.length, numSongs)
     if (allSongs.length <= numSongs) {
-      setGameOver(true);
-      setShowModal(true);
-      return;
+      setGameOver(true)
+      setShowModal(true)
+      return
     }
 
     while (songs.length < numSongs) {
       songs.push(allSongs.pop());
     }
-    console.log("Starting songs ", songs);
+    console.log("Starting songs ", songs)
 
     for (let item of songs) {
       artists.push(allArtists.find((e) => e.artistName === item.artistName));
     }
-    console.log("starting Artists ", artists);
+    console.log("starting Artists ", artists)
     while (artists.length < numArtists) {
-      let tempArtist =
-        allArtists[Math.floor(Math.random() * allArtists.length)];
-      console.log("temp is ", tempArtist);
+      let tempArtist = allArtists[Math.floor(Math.random() * allArtists.length)]
+      console.log("temp is ", tempArtist)
       if (artists.artistName !== tempArtist.artistName)
         artists.push(tempArtist);
     }
 
-    console.log("Finsihed artist ", artists);
+    console.log("Finsihed artist ", artists)
     localStorage.setItem(
       "apiResults",
       JSON.stringify({
@@ -83,31 +93,48 @@ const Game = () => {
         artists: allArtists,
       })
     );
+
+    //shuffle both songs and artists arrays
+    setSongs(songs)
+    setArtists(artists)
+
   };
+
   const handleSelectSong = (song) => {
-    console.log("Song is ", song);
+    console.log("Song is ", song, " matching is ", matches)
     setSelectedSong(song);
-    // console.log("selectedSong is ", selectedSong)
     if (selectedArtist !== false) {
       if (song.artistName !== selectedArtist.artistName) {
+        console.log("FAILLED", " matches is ", matches)
         setAttempts(attempts - 1);
         setSelectedSong(false);
         setSelectedArtist(false);
 
-        if (attempts - 1 === 0) {
-          setTimeout(() => setShowModal(true), 500);
+        if ((attempts - 1) === 0) {
+          setShowModal(true)
+          setIsPlaying(false);
         }
+
       }
       if (song.artistName == selectedArtist.artistName) {
-        console.log("I'm Here and score is ", score);
+        console.log("I'm Here and score is ", score)
         setScore(score + 100);
         setSelectedSong(false);
         setSelectedArtist(false);
+        setMatches(matches + 1)
+
+        console.log("matches is ", matches, " +1 ", matches + 1)
+        if ((matches + 1) === gameSettings.numSongs) {
+          setWon(true)
+          setShowModal(true)
+        }
       }
     }
   };
+
   const handleSelectArtist = (artist) => {
-    console.log("Artist is ", artist);
+
+    console.log("Artist is ", artist)
     setSelectedArtist(artist);
 
     if (selectedSong !== false) {
@@ -116,14 +143,21 @@ const Game = () => {
         setSelectedSong(false);
         setSelectedArtist(false);
 
-        if (attempts === 0) {
-          setTimeout(() => setShowModal(true), 500);
+        if ((attempts - 1) === 0) {
+          setShowModal(true)
+          setIsPlaying(false);
         }
       }
       if (selectedSong.artistName == artist.artistName) {
         setScore(score + 100);
         setSelectedSong(false);
         setSelectedArtist(false);
+        setMatches(matches + 1)
+        console.log("matches is ", matches, " +1 ", gameSettings.numSongs)
+        if ((matches + 1) === gameSettings.numSongs) {
+          setWon(true)
+          setShowModal(true)
+        }
       }
     }
   };
@@ -157,6 +191,7 @@ const Game = () => {
     return <div>{hearts}</div>;
   }
 
+
   return (
     <Container
       maxWidth="lg"
@@ -186,7 +221,7 @@ const Game = () => {
               Songs
             </Typography>
             <div>
-              {[...songs].map((song) => (
+              {songs && [...songs].map((song) => (
                 <div key={song.trackName}>
                   <Button
                     style={{ fontSize: "20px" }}
@@ -220,7 +255,7 @@ const Game = () => {
               Artists
             </Typography>
             <div>
-              {_.chunk([...artists], 2).map((chunk, index) => (
+              {artists && _.chunk([...artists], 2).map((chunk, index) => (
                 <Grid key={index} container spacing={2}>
                   {chunk.map((artist) => (
                     <Grid key={artist.artistName} item xs={12} sm={6}>
@@ -251,6 +286,7 @@ const Game = () => {
             solution={solution}
             score={score}
             gameOver={gameOver}
+            onClose={() => { setShowModal(false); window.location.reload(false) }}
           />
         )}
       </Box>
