@@ -248,7 +248,7 @@ const Home = () => {
       >
         <Typography variant="h2">Spotify Guessing Game</Typography>
         <Typography>To play the game either: </Typography>
-        <Typography>1. Click 'State Game' button and play with default options </Typography>
+        <Typography>1. Click 'Start Game' button and play with default options </Typography>
         <Typography>2. Change the options for the game first. </Typography>
 
 
