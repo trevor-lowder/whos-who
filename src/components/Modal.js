@@ -36,8 +36,8 @@ const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
         <ModalDiv>
           <Typography variant="h3">You Win!</Typography>
           <Typography variant="h4">Final score:{score}</Typography>
-          <Typography variant="h5">The correct answer was</Typography>
-          <Typography variant="h5">{solution}</Typography>
+          {/* <Typography variant="h5">The correct answer was</Typography> */}
+          {/* <Typography variant="h5">{solution}</Typography> */}
           <Typography variant="h6">
             You cleared the round with {attempts} attempts left
           </Typography>
@@ -78,12 +78,13 @@ const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
           <Typography variant="h4" gutterBottom="true">
             Final score:{score}
           </Typography>
-          <Typography variant="h5" color="error">
-            The correct answer was:
-          </Typography>
-          <Typography variant="h5" color="primary" gutterBottom="true">
-            {solution}
-          </Typography>
+          <Typography variant="h5" color="error">Not a winner this time.</Typography>
+          {/* <Typography variant="h5" color="error"> */}
+          {/* The correct answer was: */}
+          {/* </Typography> */}
+          {/* <Typography variant="h5" color="primary" gutterBottom="true"> */}
+          {/* {solution} */}
+          {/* </Typography> */}
           <Typography variant="h6" gutterBottom="true">
             Give it another try!
           </Typography>

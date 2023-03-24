@@ -123,8 +123,9 @@ const Game = ({ numAttempts = 3 }) => {
         setSelectedArtist(false);
         setMatches(matches + 1)
 
-        console.log("matches is ", matches, " +1 ", matches + 1)
+        console.log("Song matches is ", matches, " +1 ", gameSettings.numSongs)
         if ((matches + 1) === gameSettings.numSongs) {
+          console.log("Winner")
           setWon(true)
           setShowModal(true)
         }
@@ -153,8 +154,10 @@ const Game = ({ numAttempts = 3 }) => {
         setSelectedSong(false);
         setSelectedArtist(false);
         setMatches(matches + 1)
-        console.log("matches is ", matches, " +1 ", gameSettings.numSongs)
-        if ((matches + 1) === gameSettings.numSongs) {
+
+        console.log("Artist matches is ", matches + 1, " +1 ", gameSettings.numSongs, (matches + 1) == gameSettings.numSongs)
+        if ((matches + 1) == gameSettings.numSongs) {
+          console.log("Winner")
           setWon(true)
           setShowModal(true)
         }
