@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { async } from 'regenerator-runtime'
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { async } from "regenerator-runtime";
 
-import fetchFromSpotify, { request } from '../services/api'
+import fetchFromSpotify, { request } from "../services/api";
 import {
   Box,
   Button,
@@ -13,46 +13,54 @@ import {
   Typography,
 } from "@material-ui/core";
 import Modal from "./Modal";
+import Rules from "./Rules";
 
 const AUTH_ENDPOINT =
   "https://nuod0t2zoe.execute-api.us-east-2.amazonaws.com/FT-Classroom/spotify-auth-token";
 const TOKEN_KEY = "whos-who-access-token";
 
 const Home = () => {
-  const [genres, setGenres] = useState([])
-  const [selectedGenre, setSelectedGenre] = useState('pop')
-  const [songCount, setSongCount] = useState(1)
-  const [artistPerChoice, setArtistPerChoice] = useState(2)
-  const [authLoading, setAuthLoading] = useState(false)
-  const [configLoading, setConfigLoading] = useState(false)
-  const [token, setToken] = useState('')
-  const [attempts, setAttempts] = useState(3)
-  const [songs, setSongs] = useState([])
-  const [explicit, setExplicit] = useState(false)
-  const [artists, setArtists] = useState([])
-  const [error, setError] = useState(false)
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState("pop");
+  const [songCount, setSongCount] = useState(1);
+  const [artistPerChoice, setArtistPerChoice] = useState(2);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [configLoading, setConfigLoading] = useState(false);
+  const [token, setToken] = useState("");
+  const [attempts, setAttempts] = useState(3);
+  const [songs, setSongs] = useState([]);
+  const [explicit, setExplicit] = useState(false);
+  const [artists, setArtists] = useState([]);
+  const [error, setError] = useState(false);
 
-  const history = useHistory()
+  const history = useHistory();
 
-  const loadGenres = async t => {
-    setConfigLoading(true)
+  const loadGenres = async (t) => {
+    setConfigLoading(true);
     const response = await fetchFromSpotify({
       token: t,
-      endpoint: 'recommendations/available-genre-seeds'
-    })
-    setGenres(response.genres)
-    setConfigLoading(false)
-  }
+      endpoint: "recommendations/available-genre-seeds",
+    });
+    setGenres(response.genres);
+    setConfigLoading(false);
+  };
 
   const searchGenre = async () => {
-    setError(true)
-    console.log("songs ", songCount, " numArt ", artistPerChoice, " genre ", selectedGenre)
-    localStorage.removeItem("apiResults")
-    let songsToAdd = []
-    let artistToGetById = []
-    let artistToAdd = []
-    let noPreview = []
-    console.log("token ", token)
+    setError(true);
+    console.log(
+      "songs ",
+      songCount,
+      " numArt ",
+      artistPerChoice,
+      " genre ",
+      selectedGenre
+    );
+    localStorage.removeItem("apiResults");
+    let songsToAdd = [];
+    let artistToGetById = [];
+    let artistToAdd = [];
+    let noPreview = [];
+    console.log("token ", token);
     const response = await fetchFromSpotify({
       token: token,
       endpoint: "search",
@@ -63,110 +71,105 @@ const Home = () => {
         type: "artist%2Ctrack",
         market: "US",
         limit: 50,
-        offset: 0
-      }
-    })
+        offset: 0,
+      },
+    });
 
-    console.log("A ", response.artists.items, " D ", response.tracks.items, " error ", error)
-    if (response.artists.items.length === 0 || response.tracks.items.length === 0) {
-      setError(true)
-      console.log("ASDFASDFASDFASDF")
-      return
+    console.log(
+      "A ",
+      response.artists.items,
+      " D ",
+      response.tracks.items,
+      " error ",
+      error
+    );
+    if (
+      response.artists.items.length === 0 ||
+      response.tracks.items.length === 0
+    ) {
+      setError(true);
+      console.log("ASDFASDFASDFASDF");
+      return;
     }
-
 
     console.log("response is ", response),
       response.tracks.items.forEach((track) => {
         artistToGetById.push(track.artists[0].id);
         if (!explicit) {
           if (track.preview_url && !track.explicit) {
-            songsToAdd.push(
-              {
-                trackName: track.name,
-                artistName: track.artists[0].name,
-                previewURL: track.preview_url
-              }
-            )
+            songsToAdd.push({
+              trackName: track.name,
+              artistName: track.artists[0].name,
+              previewURL: track.preview_url,
+            });
+          } else {
+            noPreview.push({
+              trackName: track.name,
+              artistName: track.artists[0].name,
+              trackId: track.id,
+            });
           }
-          else {
-            noPreview.push(
-              {
-                trackName: track.name,
-                artistName: track.artists[0].name,
-                trackId: track.id
-              }
-            )
-          }
-        }
-        else {
+        } else {
           if (track.preview_url) {
-            songsToAdd.push(
-              {
-                trackName: track.name,
-                artistName: track.artists[0].name,
-                previewURL: track.preview_url
-              }
-            )
-          }
-          else {
-            noPreview.push(
-              {
-                trackName: track.name,
-                artistName: track.artists[0].name,
-                trackId: track.id
-              }
-            )
+            songsToAdd.push({
+              trackName: track.name,
+              artistName: track.artists[0].name,
+              previewURL: track.preview_url,
+            });
+          } else {
+            noPreview.push({
+              trackName: track.name,
+              artistName: track.artists[0].name,
+              trackId: track.id,
+            });
           }
         }
-      })
+      });
 
-    response.artists.items.forEach(artist => {
-      artistToGetById = artistToGetById.filter(id => id !== artist.id)
+    response.artists.items.forEach((artist) => {
+      artistToGetById = artistToGetById.filter((id) => id !== artist.id);
 
-      artistToAdd.push(
-        {
-          artistName: artist.name,
-          artistImg: artist.images[2].url
-        }
-      )
-    })
+      artistToAdd.push({
+        artistName: artist.name,
+        artistImg: artist.images[2].url,
+      });
+    });
     if (artistToGetById.length > 0) {
       const artistResponse = await fetchFromSpotify({
         token: token,
-        endpoint: 'artists',
+        endpoint: "artists",
         params: {
-          ids: artistToGetById.join(',')
-        }
-      })
+          ids: artistToGetById.join(","),
+        },
+      });
 
-      artistResponse.artists.forEach(artist => {
-        artistToGetById = artistToGetById.filter(id => id !== artist.id)
+      artistResponse.artists.forEach((artist) => {
+        artistToGetById = artistToGetById.filter((id) => id !== artist.id);
 
-
-        artistToAdd.push(
-          {
-            artistName: artist.name,
-            artistImg: artist.images[2].url
-          }
-        )
-      })
+        artistToAdd.push({
+          artistName: artist.name,
+          artistImg: artist.images[2].url,
+        });
+      });
     }
     localStorage.setItem(
       "apiResults",
       JSON.stringify({
         songs: songsToAdd,
-        artists: artistToAdd
-      }))
+        artists: artistToAdd,
+      })
+    );
 
-    console.log("I'm here with ", songsToAdd)
+    console.log("I'm here with ", songsToAdd);
 
+    history.push("play");
+  };
 
-    history.push('\play')
-
-  }
-
-  const updateLocalStorageGameSettings = (selectedGenre, songCount, artistPerChoice) => {
-
+  const updateLocalStorageGameSettings = (
+    selectedGenre,
+    songCount,
+    artistPerChoice
+  ) => {
     localStorage.setItem(
       "gameSettings",
       JSON.stringify({
@@ -194,11 +197,10 @@ const Home = () => {
     setArtistPerChoice(numArtist);
     setSongCount(numSong);
     setSelectedGenre(randGenre);
-    setAttempts(attempts)
+    setAttempts(attempts);
 
-    updateLocalStorageGameSettings(randGenre, numSong, numArtist)
-  }
-
+    updateLocalStorageGameSettings(randGenre, numSong, numArtist);
+  };
 
   useEffect(() => {
     setAuthLoading(true);
@@ -234,24 +236,28 @@ const Home = () => {
   return (
     <Container
       maxWidth="100%"
-      sx={{ height: "100%", padding: 0, overflow: "hidden" }}>
-
+      sx={{ height: "100%", padding: 0, overflow: "hidden" }}
+    >
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
           textAlign: "center",
-          marginTop: '10rem'
-
+          marginTop: "10rem",
         }}
       >
-        <Typography variant="h2">Spotify Guessing Game</Typography>
-        <Typography>To play the game either: </Typography>
-        <Typography>1. Click 'State Game' button and play with default options </Typography>
-        <Typography>2. Change the options for the game first. </Typography>
-
-
+        <Typography variant="h2" gutterBottom>
+          Spotify Guessing Game
+        </Typography>
+        <Typography>To start the game either: </Typography>
+        <Typography>
+          1. Click 'State Game' button and play with default options{" "}
+        </Typography>
+        <Typography gutterBottom>
+          2. Change the options for the game first.{" "}
+        </Typography>
+        <Rules />
         <FormControl
           variant="outlined"
           margin="dense"
@@ -274,8 +280,8 @@ const Home = () => {
             value={selectedGenre}
             onChange={(event) => setSelectedGenre(event.target.value)}
           >
-            <option value='' />
-            {genres.map(genre => (
+            <option value="" />
+            {genres.map((genre) => (
               <option key={genre} value={genre}>
                 {genre}
               </option>
@@ -287,7 +293,9 @@ const Home = () => {
                 genres[Math.floor(Math.random() * genres.length)]
               )
             }
-          >Pick Random Genre</Button>
+          >
+            Pick Random Genre
+          </Button>
         </FormControl>
         <FormControl
           variant="outlined"
@@ -392,8 +400,8 @@ const Home = () => {
         {/* {console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre)} */}
         {error && <h3>The Genre has no songs/artists please choice another</h3>}
       </Box>
-    </Container >
-  )
-}
+    </Container>
+  );
+};
 
-export default Home
+export default Home;
