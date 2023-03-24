@@ -97,8 +97,8 @@ const Game = ({ numAttempts = 3 }) => {
     );
 
     //shuffle both songs and artists arrays
-    setSongs(songs);
-    setArtists(artists);
+    setSongs(_.shuffle(songs));
+    setArtists(_.shuffle(artists));
   };
 
   const handleSelectSong = (song) => {
