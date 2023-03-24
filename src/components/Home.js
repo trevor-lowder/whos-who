@@ -252,12 +252,14 @@ const Home = () => {
         </Typography>
         <Typography>To start the game either: </Typography>
         <Typography>
-          1. Click 'State Game' button and play with default options{" "}
+          1. Click 'Start Game' button and play with default options{" "}
         </Typography>
         <Typography gutterBottom>
           2. Change the options for the game first.{" "}
         </Typography>
         <Rules />
+
+
         <FormControl
           variant="outlined"
           margin="dense"
