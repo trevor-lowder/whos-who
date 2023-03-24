@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { async } from "regenerator-runtime";
 import fetchFromSpotify, { request } from "../services/api";
+import Modal from "./Modal";
 
 const AUTH_ENDPOINT =
   "https://nuod0t2zoe.execute-api.us-east-2.amazonaws.com/FT-Classroom/spotify-auth-token";
@@ -28,7 +29,6 @@ const Home = () => {
   const [songs, setSongs] = useState([]);
   const [explicit, setExplicit] = useState(false);
   const [artists, setArtists] = useState([]);
-  // const [artImg, setArtImg] = useState('')
 
   const loadGenres = async (t) => {
     setConfigLoading(true);
@@ -36,7 +36,6 @@ const Home = () => {
       token: t,
       endpoint: "recommendations/available-genre-seeds",
     });
-    // console.log(response)
     setGenres(response.genres);
     setConfigLoading(false);
   };
@@ -50,7 +49,6 @@ const Home = () => {
       " genre ",
       selectedGenre
     );
-    // const history = useHistory()
     let songsToAdd = [];
     let artistToGetById = [];
     let artistToAdd = [];
@@ -104,9 +102,6 @@ const Home = () => {
         }
       });
 
-    // console.log("noPreviews ", noPreview)
-    // console.log("songsToAdd ", songsToAdd)
-    // console.log("artistIds ", artistToGetById)
     response.artists.items.forEach((artist) => {
       artistToGetById = artistToGetById.filter((id) => id !== artist.id);
 
@@ -116,13 +111,6 @@ const Home = () => {
       });
     });
 
-    // console.log("artistIds ", artistToGetById.join(','))
-    // setSongs(songsToAdd)
-    // setArtists(artistToAdd)
-
-    // console.log("I'm Here ", artistToGetById)
-    // console.log("SearchArtID ", artistToGetById.join(','))
-
     const artistResponse = await fetchFromSpotify({
       token: token,
       endpoint: "artists",
@@ -130,8 +118,6 @@ const Home = () => {
         ids: artistToGetById.join(","),
       },
     });
-
-    // console.log("2222response is ", artistResponse)
 
     artistResponse.artists.forEach((artist) => {
       artistToGetById = artistToGetById.filter((id) => id !== artist.id);
@@ -224,7 +210,7 @@ const Home = () => {
 
   return (
     <Container
-      maxWidth="100%"
+      maxWidth="lg"
       sx={{ height: "100%", padding: 0, overflow: "hidden" }}
     >
       <Box
@@ -233,7 +219,7 @@ const Home = () => {
           justifyContent: "center",
           flexDirection: "column",
           textAlign: "center",
-          marginTop: '10rem'
+          marginTop: "10rem",
         }}
       >
         <Typography variant="h2">Spotify Guessing Game</Typography>
@@ -249,21 +235,11 @@ const Home = () => {
           style={{ marginBottom: 10 }}
         >
           <InputLabel htmlFor="genre-choices">Genre:</InputLabel>
-          {/* <input
-        type="text"
-        list="genre-choices"
-        id="genre-choice"
-        name="genre-choice"
-        placeholder={selectedGenre}
-        onClick={event => event.target.value = ""}
-        onChange={event => setSelectedGenre(event.target.value)}
-      /> */}
           <Select
             native
             id="genre-choices"
             label="Genre"
             value={selectedGenre}
-            // defaultValue={genres[Math.floor(Math.random() * genres.length)]}
             onChange={(event) => setSelectedGenre(event.target.value)}
           >
             <option value="" />
@@ -361,7 +337,7 @@ const Home = () => {
         </FormControl>
         <Link to={"/play"}>
           <Button
-            size="large"
+            style={{ fontSize: "20px" }}
             onClick={() => {
               updateLocalStorageGameSettings(
                 selectedGenre,
@@ -375,7 +351,7 @@ const Home = () => {
           </Button>
 
           <Button
-            size="large"
+            style={{ fontSize: "20px" }}
             onClick={() => {
               randomGame();
               searchGenre();
