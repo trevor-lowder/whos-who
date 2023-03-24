@@ -5,18 +5,16 @@ import _ from "lodash";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
-
 import Modal from "./Modal";
 
-
-const Game = ({ numAttempts = 3 }) => {
+const Game = () => {
   // Game state
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [gameSettings, setGameSettings] = useState([]);
   const [selectedSong, setSelectedSong] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(false);
-  const [attempts, setAttempts] = useState(numAttempts);
+  const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -30,8 +28,10 @@ const Game = ({ numAttempts = 3 }) => {
   // const [allSongs, setAllSongs] = useState([])
   // const [allArtists, setAllArtists] = useState([])
 
+
   // Game logic
   useEffect(() => {
+
 
     setTimeout(() => {
       const settings = JSON.parse(localStorage.getItem("gameSettings"));
@@ -42,12 +42,7 @@ const Game = ({ numAttempts = 3 }) => {
       // setMatches(settings.numSongs)
       console.log("Page Loading", settings, settings.numArtists, settings.numSongs)
 
-
-      // if (localStorage.getItem("apiResults") !== "null")
-      populateSongsArtists(settings.numArtists, settings.numSongs);
-      forceUpdate()
-    }, 1000)
-
+    // populateSongsArtists(settings.numArtists, settings.numSongs);
   }, []);
 
   const populateSongsArtists = (numArtists, numSongs) => {
@@ -62,30 +57,31 @@ const Game = ({ numAttempts = 3 }) => {
     if (artists.length > 0) setArtists([]);
     if (songs.length > 0) setSongs([]);
 
-    console.log(allSongs.length, numSongs)
+    console.log(allSongs.length, numSongs);
     if (allSongs.length <= numSongs) {
-      setGameOver(true)
-      setShowModal(true)
-      return
+      setGameOver(true);
+      setShowModal(true);
+      return;
     }
 
     while (songs.length < numSongs) {
       songs.push(allSongs.pop());
     }
-    console.log("Starting songs ", songs)
+    console.log("Starting songs ", songs);
 
     for (let item of songs) {
       artists.push(allArtists.find((e) => e.artistName === item.artistName));
     }
-    console.log("starting Artists ", artists)
+    console.log("starting Artists ", artists);
     while (artists.length < numArtists) {
-      let tempArtist = allArtists[Math.floor(Math.random() * allArtists.length)]
-      console.log("temp is ", tempArtist)
+      let tempArtist =
+        allArtists[Math.floor(Math.random() * allArtists.length)];
+      console.log("temp is ", tempArtist);
       if (artists.artistName !== tempArtist.artistName)
         artists.push(tempArtist);
     }
 
-    console.log("Finsihed artist ", artists)
+    console.log("Finsihed artist ", artists);
     localStorage.setItem(
       "apiResults",
       JSON.stringify({
@@ -93,6 +89,7 @@ const Game = ({ numAttempts = 3 }) => {
         artists: allArtists,
       })
     );
+
 
     //shuffle both songs and artists arrays
     setSongs(songs)
@@ -113,11 +110,11 @@ const Game = ({ numAttempts = 3 }) => {
         if ((attempts - 1) === 0) {
           setShowModal(true)
           setIsPlaying(false);
-        }
 
+        }
       }
       if (song.artistName == selectedArtist.artistName) {
-        console.log("I'm Here and score is ", score)
+        console.log("I'm Here and score is ", score);
         setScore(score + 100);
         setSelectedSong(false);
         setSelectedArtist(false);
@@ -133,8 +130,7 @@ const Game = ({ numAttempts = 3 }) => {
   };
 
   const handleSelectArtist = (artist) => {
-
-    console.log("Artist is ", artist)
+    console.log("Artist is ", artist);
     setSelectedArtist(artist);
 
     if (selectedSong !== false) {
@@ -146,6 +142,7 @@ const Game = ({ numAttempts = 3 }) => {
         if ((attempts - 1) === 0) {
           setShowModal(true)
           setIsPlaying(false);
+
         }
       }
       if (selectedSong.artistName == artist.artistName) {
@@ -222,6 +219,7 @@ const Game = ({ numAttempts = 3 }) => {
             </Typography>
             <div>
               {songs && [...songs].map((song) => (
+
                 <div key={song.trackName}>
                   <Button
                     style={{ fontSize: "20px" }}
@@ -256,6 +254,7 @@ const Game = ({ numAttempts = 3 }) => {
             </Typography>
             <div>
               {artists && _.chunk([...artists], 2).map((chunk, index) => (
+
                 <Grid key={index} container spacing={2}>
                   {chunk.map((artist) => (
                     <Grid key={artist.artistName} item xs={12} sm={6}>
@@ -287,6 +286,7 @@ const Game = ({ numAttempts = 3 }) => {
             score={score}
             gameOver={gameOver}
             onClose={() => { setShowModal(false); window.location.reload(false) }}
+
           />
         )}
       </Box>

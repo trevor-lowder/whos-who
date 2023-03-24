@@ -1,16 +1,19 @@
+
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Typography } from "@material-ui/core";
 import styled from 'styled-components'
 
-const ModalContainer = styled.div` 
-  background: rgba(255,255,255,0.7);
+
+const ModalContainer = styled.div`
+  background: rgba(255, 255, 255, 0.7);
   position: fixed;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
 `
+
 const ModalDiv = styled.div`
   max-width: 500px;
   background: #fff;
@@ -25,6 +28,7 @@ const ModalDiv = styled.div`
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 `;
 
+
 const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
   return (
     <ModalContainer>
@@ -38,6 +42,7 @@ const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
             You cleared the round with {attempts} attempts left
           </Typography>
           <div>
+
             <Link to={'/play'}>
               <Button style={{ fontSize: "20px" }} onClick={onClose}>Play Again</Button>
             </Link>
@@ -45,6 +50,7 @@ const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
               <Button style={{ fontSize: "20px" }} onClick={() => {
               }}>Reset and Go Home</Button>
             </Link>
+
           </div>
         </ModalDiv>
       )}
@@ -60,6 +66,7 @@ const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
               <Button style={{ fontSize: "20px" }} onClick={() => {
               }}>Reset and Go Home</Button>
             </Link>
+
           </div>
         </ModalDiv>
       )}
@@ -88,12 +95,12 @@ const Modal = ({ won, attempts, solution, score, gameOver, onClose }) => {
               <Button style={{ fontSize: "20px" }} onClick={() => {
               }}>Reset and Go Home</Button>
             </Link>
+
           </div>
         </ModalDiv>
       )}
     </ModalContainer>
+  );
+};
 
-  )
-}
-
-export default Modal
+export default Modal;
