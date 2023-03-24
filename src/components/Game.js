@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import Modal from "./Modal";
 import _ from "lodash";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import PauseIcon from '@material-ui/icons/Pause';
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import PauseIcon from "@material-ui/icons/Pause";
 const Game = () => {
   // Game state
   const [artists, setArtists] = useState([]);
@@ -188,7 +188,10 @@ const Game = () => {
             <div>
               {[...songs].map((song) => (
                 <div key={song.trackName}>
-                  <Button onClick={() => handleSelectSong(song)}>
+                  <Button
+                    style={{ fontSize: "20px" }}
+                    onClick={() => handleSelectSong(song)}
+                  >
                     <p>{song.trackName}</p>
                   </Button>
                   {isPlaying && currentAudio.src === song.previewURL ? (
@@ -197,7 +200,7 @@ const Game = () => {
                         handlePlayPause(song);
                       }}
                     >
-                      <PauseIcon/>
+                      <PauseIcon />
                     </Button>
                   ) : (
                     <Button
@@ -205,7 +208,7 @@ const Game = () => {
                         handlePlayPause(song);
                       }}
                     >
-                      <PlayArrowIcon/>
+                      <PlayArrowIcon />
                     </Button>
                   )}
                 </div>
@@ -221,11 +224,19 @@ const Game = () => {
                 <Grid key={index} container spacing={2}>
                   {chunk.map((artist) => (
                     <Grid key={artist.artistName} item xs={12} sm={6}>
-                      <Button onClick={() => handleSelectArtist(artist)}>
-                      <div><img onClick={() => handleSelectArtist(artist)} src={artist.artistImg} alt={artist.artistName} />
-                      <p>{artist.artistName}</p></div>
+                      <Button
+                        style={{ fontSize: "20px" }}
+                        onClick={() => handleSelectArtist(artist)}
+                      >
+                        <div>
+                          <img
+                            onClick={() => handleSelectArtist(artist)}
+                            src={artist.artistImg}
+                            alt={artist.artistName}
+                          />
+                          <p>{artist.artistName}</p>
+                        </div>
                       </Button>
-                      
                     </Grid>
                   ))}
                 </Grid>

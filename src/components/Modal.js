@@ -38,21 +38,31 @@ const Modal = ({ won, attempts, solution, score, gameOver }) => {
             You cleared the round with {attempts} attempts left
           </Typography>
           <div>
-            <Button>Try Again</Button>
-            <Button>Home</Button>
+            <Button style={{ fontSize: "20px" }}>Try Again</Button>
+            <Button style={{ fontSize: "20px" }}>Home</Button>
           </div>
         </ModalDiv>
       )}
       {!won && (
         <ModalDiv>
-          <Typography variant="h3" gutterBottom='true'>Do you even listen to music?!</Typography>
-          <Typography variant="h4" gutterBottom='true'>Final score:{score}</Typography>
-          <Typography variant="h5" color="error">The correct answer was:</Typography>
-          <Typography variant="h5" color='primary' gutterBottom='true'>{solution}</Typography>
-          <Typography variant="h6" gutterBottom='true'>Give it another try!</Typography>
+          <Typography variant="h3" gutterBottom="true">
+            Do you even listen to music?!
+          </Typography>
+          <Typography variant="h4" gutterBottom="true">
+            Final score:{score}
+          </Typography>
+          <Typography variant="h5" color="error">
+            The correct answer was:
+          </Typography>
+          <Typography variant="h5" color="primary" gutterBottom="true">
+            {solution}
+          </Typography>
+          <Typography variant="h6" gutterBottom="true">
+            Give it another try!
+          </Typography>
           <div>
-            <Button>Try Again</Button>
-            <Button>Home</Button>
+            <Button style={{ fontSize: "20px" }}>Try Again</Button>
+            <Button style={{ fontSize: "20px" }}>Home</Button>
           </div>
         </ModalDiv>
       )}
@@ -64,8 +74,8 @@ const Modal = ({ won, attempts, solution, score, gameOver }) => {
             Great game! You know you wanna play some more!!
           </Typography>
           <div>
-            <Button>Try Again</Button>
-            <Button>Home</Button>
+            <Button style={{ fontSize: "20px" }}>Try Again</Button>
+            <Button style={{ fontSize: "20px" }}>Home</Button>
           </div>
         </ModalDiv>
       )}

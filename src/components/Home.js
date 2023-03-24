@@ -102,7 +102,6 @@ const Home = () => {
         }
       });
 
-
     response.artists.items.forEach((artist) => {
       artistToGetById = artistToGetById.filter((id) => id !== artist.id);
 
@@ -112,7 +111,6 @@ const Home = () => {
       });
     });
 
-  
     const artistResponse = await fetchFromSpotify({
       token: token,
       endpoint: "artists",
@@ -221,7 +219,7 @@ const Home = () => {
           justifyContent: "center",
           flexDirection: "column",
           textAlign: "center",
-          marginTop: '10rem'
+          marginTop: "10rem",
         }}
       >
         <Typography variant="h2">Spotify Guessing Game</Typography>
@@ -339,7 +337,7 @@ const Home = () => {
         </FormControl>
         <Link to={"/play"}>
           <Button
-            size="large"
+            style={{ fontSize: "20px" }}
             onClick={() => {
               updateLocalStorageGameSettings(
                 selectedGenre,
@@ -353,7 +351,7 @@ const Home = () => {
           </Button>
 
           <Button
-            size="large"
+            style={{ fontSize: "20px" }}
             onClick={() => {
               randomGame();
               searchGenre();
