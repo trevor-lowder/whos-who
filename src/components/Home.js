@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { async } from 'regenerator-runtime'
+
 import fetchFromSpotify, { request } from '../services/api'
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  InputLabel,
+  Select,
+  Typography,
+} from "@material-ui/core";
 
 const AUTH_ENDPOINT =
   'https://nuod0t2zoe.execute-api.us-east-2.amazonaws.com/FT-Classroom/spotify-auth-token'
@@ -19,7 +29,9 @@ const Home = () => {
   const [songs, setSongs] = useState([])
   const [explicit, setExplicit] = useState(false)
   const [artists, setArtists] = useState([])
-  // const [artImg, setArtImg] = useState('')
+  const [error, setError] = useState(false)
+
+  const history = useHistory()
 
   const loadGenres = async t => {
     setConfigLoading(true)
@@ -27,14 +39,14 @@ const Home = () => {
       token: t,
       endpoint: 'recommendations/available-genre-seeds'
     })
-    // console.log(response)
     setGenres(response.genres)
     setConfigLoading(false)
   }
 
   const searchGenre = async () => {
+    setError(true)
     console.log("songs ", songCount, " numArt ", artistPerChoice, " genre ", selectedGenre)
-    // const history = useHistory()
+    localStorage.removeItem("apiResults")
     let songsToAdd = []
     let artistToGetById = []
     let artistToAdd = []
@@ -52,6 +64,12 @@ const Home = () => {
       }
     })
 
+    console.log("A ", response.artists.items, " D ", response.tracks.items, " error ", error)
+    if (response.artists.items.length === 0 || response.tracks.items.length === 0) {
+      setError(true)
+      console.log("ASDFASDFASDFASDF")
+      return
+    }
 
     console.log("response is ", response),
       response.tracks.items.forEach(track => {
@@ -98,9 +116,6 @@ const Home = () => {
         }
       })
 
-    // console.log("noPreviews ", noPreview)
-    // console.log("songsToAdd ", songsToAdd)
-    // console.log("artistIds ", artistToGetById)
     response.artists.items.forEach(artist => {
       artistToGetById = artistToGetById.filter(id => id !== artist.id)
 
@@ -111,44 +126,36 @@ const Home = () => {
         }
       )
     })
-
-    // console.log("artistIds ", artistToGetById.join(','))
-    // setSongs(songsToAdd)
-    // setArtists(artistToAdd)
-
-
-    // console.log("I'm Here ", artistToGetById)
-    // console.log("SearchArtID ", artistToGetById.join(','))
-
-    const artistResponse = await fetchFromSpotify({
-      token: token,
-      endpoint: 'artists',
-      params: {
-        ids: artistToGetById.join(',')
-      }
-    })
-
-    // console.log("2222response is ", artistResponse)
-
-    artistResponse.artists.forEach(artist => {
-      artistToGetById = artistToGetById.filter(id => id !== artist.id)
-
-      artistToAdd.push(
-        {
-          artistName: artist.name,
-          artistImg: artist.images[2].url
+    if (artistToGetById.length > 0) {
+      const artistResponse = await fetchFromSpotify({
+        token: token,
+        endpoint: 'artists',
+        params: {
+          ids: artistToGetById.join(',')
         }
-      )
-    })
+      })
 
-    // setSongs(songsToAdd)
-    // setArtists(artistToAdd)
+      artistResponse.artists.forEach(artist => {
+        artistToGetById = artistToGetById.filter(id => id !== artist.id)
 
+        artistToAdd.push(
+          {
+            artistName: artist.name,
+            artistImg: artist.images[2].url
+          }
+        )
+      })
+    }
     localStorage.setItem(
       "apiResults", JSON.stringify({
         songs: songsToAdd,
         artists: artistToAdd
       }))
+
+    console.log("I'm here with ", songsToAdd)
+
+
+    history.push('\play')
 
   }
 
@@ -184,9 +191,6 @@ const Home = () => {
     setAttempts(attempts)
 
     updateLocalStorageGameSettings(randGenre, numSong, numArtist)
-
-
-
   }
 
 
@@ -222,12 +226,30 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <h1>Spotify Guessing Game</h1>
-      <p>To play the game either: 1. Click 'State Game' button and play with default options or 2. Change the options for the game first. </p>
+    <Container
+      maxWidth="100%"
+      sx={{ height: "100%", padding: 0, overflow: "hidden" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          textAlign: "center",
+          marginTop: '10rem'
+        }}
+      >
+        <Typography variant="h2">Spotify Guessing Game</Typography>
+        <Typography>To play the game either: </Typography>
+        <Typography>1. Click 'State Game' button and play with default options </Typography>
+        <Typography>2. Change the options for the game first. </Typography>
 
-      <label htmlFor="genre-choice">Genre:</label>
-      {/* <input
+        <FormControl
+          variant="outlined"
+          margin="dense"
+          style={{ marginBottom: 10 }}
+        >
+          <InputLabel htmlFor="genre-choice">Genre:</InputLabel>
+          {/* <input
         type="text"
         list="genre-choices"
         id="genre-choice"
@@ -236,79 +258,132 @@ const Home = () => {
         onClick={event => event.target.value = ""}
         onChange={event => setSelectedGenre(event.target.value)}
       /> */}
-      <select id='genre-choices'
-        value={selectedGenre}
-        // defaultValue={genres[Math.floor(Math.random() * genres.length)]}
-        onChange={event => setSelectedGenre(event.target.value)}
-      >
-        <option value='' />
-        {genres.map(genre => (
-          <option key={genre} value={genre}>
-            {genre}
-          </option>
-        ))}
-      </select>
-      <button onClick={() => setSelectedGenre(genres[Math.floor(Math.random() * genres.length)])}>Pick Random Genre</button>
-
-      Number of Songs:
-      <select
-        value={songCount}
-        onChange={event => setSongCount(event.target.value)}
-      >
-        <option value="1">1</option>
-        <option value='2'>2</option>
-        <option value='3'>3</option>
-      </select>
-
-      Number of Artists per Choice:
-      <select
-        value={artistPerChoice}
-        onChange={event => setArtistPerChoice(event.target.value)}
-      >
-        <option value='2'>2</option>
-        <option value='3'>3</option>
-        <option value='4'>4</option>
-      </select>
-      Number of Attempts per Game:
-      <select
-        value={attempts}
-        onChange={event => setAttempts(event.target.value)}
-      >
-        <option value='1'>1</option>
-        <option value='2'>2</option>
-        <option value='3'>3</option>
-        <option value='4'>4</option>
-        <option value='5'>5</option>
-      </select>
-      Allow Explicit Songs:
-      <select
-        value={explicit}
-        onChange={event => setExplicit(event.target.value)}
-      >
-        <option value='true'>Yes</option>
-        <option value='false'>No</option>
-      </select>
-      <Link to={'/play'}>
-        <button
+          <Select
+            native
+            id="genre-choices"
+            label="Genre"
+            value={selectedGenre}
+            onChange={(event) => setSelectedGenre(event.target.value)}
+          >
+            <option value='' />
+            {genres.map(genre => (
+              <option key={genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </Select>
+          <Button
+            onClick={() =>
+              setSelectedGenre(
+                genres[Math.floor(Math.random() * genres.length)]
+              )
+            }
+          >Pick Random Genre</Button>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          margin="dense"
+          style={{ marginBottom: 10 }}
+        >
+          <InputLabel htmlFor="number-of-songs">Songs:</InputLabel>
+          <Select
+            label="Songs"
+            id="number-of-songs"
+            native
+            value={songCount}
+            onChange={(event) => setSongCount(event.target.value)}
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          margin="dense"
+          style={{ marginBottom: 10 }}
+        >
+          <InputLabel htmlFor="number-of-artists">Artists:</InputLabel>
+          <Select
+            native
+            label="Artists"
+            id="number-of-artists"
+            value={artistPerChoice}
+            onChange={(event) => setArtistPerChoice(event.target.value)}
+          >
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          margin="dense"
+          style={{ marginBottom: 10 }}
+        >
+          <InputLabel htmlFor="number-of-attempts"> Attempts:</InputLabel>
+          <Select
+            native
+            label="Attempts"
+            id="number-of-attempts"
+            value={attempts}
+            onChange={(event) => setAttempts(event.target.value)}
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </Select>
+        </FormControl>
+        <FormControl
+          variant="outlined"
+          margin="dense"
+          style={{ marginBottom: 10 }}
+        >
+          <InputLabel htmlFor="allow-explicit-songs">
+            Include explicit songs?:
+          </InputLabel>
+          <Select
+            native
+            label="Include explicit songs?"
+            id="allow-explicit-songs"
+            value={explicit}
+            onChange={(event) => setExplicit(event.target.value)}
+          >
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </Select>
+        </FormControl>
+        {/* <Link to={'/play'}> */}
+        <Button
+          style={{ fontSize: "20px" }}
           onClick={() => {
-            updateLocalStorageGameSettings(selectedGenre, songCount, artistPerChoice)
-            searchGenre()
+            updateLocalStorageGameSettings(
+              selectedGenre,
+              songCount,
+              artistPerChoice
+            );
+            searchGenre();
           }}
         >
           Start Game!
-        </button>
+        </Button>
 
-        <button
+        <Button
+          style={{ fontSize: "20px" }}
           onClick={() => {
-            randomGame()
-            searchGenre()
+            randomGame();
+            searchGenre();
           }}
         >
           Random Game
-        </button>
-      </Link>
-      {console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre)}
-    </div >
+        </Button>
+        {/* </Link> */}
+        {/* {console.log("numSong ", songCount, " numArtist ", artistPerChoice, " genre ", selectedGenre)} */}
+        {error && <h3>The Genre has no songs/artists please choice another</h3>}
+      </Box>
+    </Container >
   )
 }
 
