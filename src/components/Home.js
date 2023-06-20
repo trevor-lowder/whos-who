@@ -248,6 +248,9 @@ const Home = () => {
         }}
       >
         <Typography variant="h2" gutterBottom>
+          Who's Who?
+        </Typography>
+        <Typography variant="h4" gutterBottom>
           Spotify Guessing Game
         </Typography>
         <Typography>To start the game either: </Typography>
